@@ -23,11 +23,11 @@ services:
   svelte:
     container_name: svelte
     build:
-      context: ./client
+      context: ./svelte
     depends_on:
       - directus
     volumes:
-      - ./client/src:/client/src
-      - ./client/.svelte-kit:/client/.svelte-kit
+      - ./svelte/src:/client/src
+      - ./svelte/.svelte-kit:/client/.svelte-kit
     ports:
       - 3000:3000
