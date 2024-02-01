@@ -1,6 +1,6 @@
 import { DIRECTUS_URL } from "$env/static/private";
 import api from "$lib/api";
-import { logger, perf } from "$lib/logger";
+import { logger, perf } from "$lib/server/logger";
 
 /**
  * @typedef {{
