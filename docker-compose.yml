@@ -1,14 +1,4 @@
 services:
-  client:
-    container_name: solace-cms-client
-    build:
-      context: ./client
-    volumes:
-      - ./client/src:/client/src
-      - ./client/.svelte-kit:/client/.svelte-kit
-    ports:
-      - 3000:3000
-
   directus:
     container_name: solace-cms-directus
     image: directus/directus:10.8.3
@@ -29,3 +19,15 @@ services:
         # CACHE_ENABLED: "true"
         # CACHE_STORE: "redis"
         # REDIS: "redis://cache:6379"
+        #
+  client:
+    container_name: solace-cms-client
+    build:
+      context: ./client
+    depends_on:
+      - directus
+    volumes:
+      - ./client/src:/client/src
+      - ./client/.svelte-kit:/client/.svelte-kit
+    ports:
+      - 3000:3000

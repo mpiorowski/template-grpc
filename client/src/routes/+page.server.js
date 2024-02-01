@@ -1,9 +1,15 @@
-import api from '$lib/api';
+import { getAllArticles } from "$lib/server/articles_service";
+import { error } from "@sveltejs/kit";
+
+export const prerender = true;
 
 /** @type {import('./$types').PageServerLoad} */
-export function load({ locals }) {
-    const data = await api(
+export async function load() {
+    const articles = await getAllArticles();
+    if (!articles.success) {
+        return error(500, articles.error);
+    }
     return {
-        locals,
+        articles: articles.data,
     };
 }

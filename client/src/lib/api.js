@@ -4,13 +4,13 @@ import { safe } from "./safe";
  * API wrapper
  * @param {string} url
  * @param {{
- *  method: "GET" | "POST" | "PUT" | "DELETE"
+ *  method?: "GET" | "POST" | "PUT" | "DELETE"
  *  body?: string
  *  }} options
  *  @returns {Promise<import("./types").Safe<T>>}
  *  @template T
  */
-export default async function api(url, { method = "GET", body = undefined }) {
+export default async function api(url, { method = "GET", body = undefined } = {}) {
     const res = await safe(
         fetch(url, {
             method,
