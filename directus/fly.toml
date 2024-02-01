@@ -13,6 +13,8 @@ primary_region = 'arn'
   ADMIN_PASSWORD = "A1m2n"
   DB_CLIENT = "pg"
   CACHE_ENABLED = "true"
+  CACHE_TTL = "10m"
+  CACHE_AUTO_PURGE = "true"
 
 [build]
 
