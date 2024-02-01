@@ -1,4 +1,3 @@
-import { ENV } from "$env/static/private";
 import pino from "pino";
 
 export const logger = pino({
@@ -8,7 +7,6 @@ export const logger = pino({
             colorize: true,
         },
     },
-    level: ENV === "production" ? "info" : "debug",
 });
 
 /**
@@ -17,11 +15,6 @@ export const logger = pino({
  * @returns {() => void} - The end function
  */
 export function perf(name) {
-    if (ENV === "production") {
-        return () => {
-            // do nothing
-        };
-    }
     const start = performance.now();
 
     /**
