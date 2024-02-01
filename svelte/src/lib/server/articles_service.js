@@ -1,6 +1,6 @@
 import { DIRECTUS_URL } from "$env/static/private";
 import api from "$lib/api";
-import { logger } from "$lib/logger";
+import { logger, perf } from "$lib/logger";
 
 /**
  * @typedef {{
@@ -15,11 +15,13 @@ import { logger } from "$lib/logger";
  * @returns {Promise<import("../types").Safe<Article[]>>}
  */
 export async function getAllArticles() {
+    const end = perf("getAllArticles");
     /** @type {import("../types").Safe<{data: Article[]}>} */
     const data = await api(DIRECTUS_URL + "/items/articles");
     if (!data.success) {
         logger.error(`Failed to get articles: ${data.error}`);
         return { success: false, error: data.error };
     }
+    end();
     return { success: true, data: data.data.data };
 }
