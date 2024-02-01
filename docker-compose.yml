@@ -3,8 +3,6 @@ services:
     container_name: solace-cms-client
     build:
       context: ./client
-      args:
-        ENV: development
     volumes:
       - ./client/src:/client/src
       - ./client/.svelte-kit:/client/.svelte-kit
