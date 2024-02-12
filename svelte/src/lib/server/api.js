@@ -7,7 +7,7 @@ import { safe } from "./safe";
  *  method?: "GET" | "POST" | "PUT" | "DELETE"
  *  body?: string
  *  }} options
- *  @returns {Promise<import("../types").Safe<T>>}
+ *  @returns {Promise<import("./safe.types").Safe<T>>}
  *  @template T
  */
 export default async function api(url, { method = "GET", body = undefined } = {}) {
