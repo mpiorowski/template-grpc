@@ -1,5 +1,5 @@
 import { DIRECTUS_URL } from "$env/static/private";
-import api from "$lib/api";
+import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 
 /**
