@@ -3,9 +3,13 @@
     import { scale } from "svelte/transition";
 
     /** @type {string} */
-    export let avatarUrl;
-    /** @type {string} */
     export let email;
+    /** @type {string} */
+    export let first_name;
+    /** @type {string} */
+    export let last_name;
+    /** @type {string} */
+    export let avatar;
 
     /** @type {boolean} */
     let open = false;
@@ -89,11 +93,11 @@
         on:click={() => (open = !open)}
     >
         <span class="sr-only">Open user menu</span>
-        {#if avatarUrl}
-            <img class="h-8 w-8 rounded-full" src={avatarUrl} alt="Avatar" />
+        {#if avatar}
+            <img class="h-8 w-8 rounded-full" src={avatar} alt="Avatar" />
         {:else}
             <svg
-                class="h-full w-full text-gray-300"
+                class="h-8 w-8 rounded-full"
                 fill="currentColor"
                 viewBox="0 0 24 24"
             >
@@ -108,7 +112,7 @@
                 class="ml-4 text-sm font-semibold leading-6"
                 aria-hidden="true"
             >
-                Account
+                {first_name} {last_name}
             </span>
             <svg
                 class="ml-2 h-5 w-5 text-gray-400"

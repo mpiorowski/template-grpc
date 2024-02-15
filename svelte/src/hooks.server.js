@@ -5,6 +5,8 @@ export async function handle({ event, resolve }) {
 
     event.locals.user = {
         email: "mateuszpiorowski@gmail.com",
+        first_name: "Mateusz",
+        last_name: "Piorowski",
         avatar: "https://picsum.photos/200/300",
     };
 

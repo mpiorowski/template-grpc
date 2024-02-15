@@ -4,7 +4,6 @@
     import Toast from "$lib/ui/toast.svelte";
     import { toastStore } from "$lib/ui/toast.store.js";
     import Avatar from "./avatar.svelte";
-    import Breadcrumbs from "./breadcrumbs.svelte";
     import "../app.css";
     import Nav from "./nav.svelte";
     import { navigating } from "$app/stores";
@@ -58,7 +57,11 @@
         <div
             class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-l border-white/5 bg-gray-900 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
         >
-            <button type="button" class="-m-2.5 p-2.5 lg:hidden" on:click={() => (open = true)}>
+            <button
+                type="button"
+                class="-m-2.5 p-2.5 lg:hidden"
+                on:click={() => (open = true)}
+            >
                 <span class="sr-only">Open sidebar</span>
                 <svg
                     class="h-6 w-6"
@@ -131,7 +134,7 @@
                     />
 
                     <!-- Profile dropdown -->
-                    <Avatar email={data.email} avatarUrl={data.avatar} />
+                    <Avatar email={data.email} avatar={data.avatar} first_name={data.first_name} last_name={data.last_name} />
                 </div>
             </div>
         </div>
