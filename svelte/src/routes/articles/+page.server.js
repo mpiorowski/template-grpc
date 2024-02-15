@@ -1,4 +1,4 @@
-import { getAllArticles } from "$lib/server/articles_service";
+import { getAllArticles } from "$lib/server/services/articles_service";
 import { error } from "@sveltejs/kit";
 
 export const prerender = true;

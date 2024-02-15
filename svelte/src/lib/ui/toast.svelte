@@ -1,9 +1,9 @@
 <script>
-    import { toastStore } from "$lib/ui/toast";
     import { cubicOut } from "svelte/easing";
     import { fade, fly } from "svelte/transition";
+    import { toastStore } from "./toast.store.js";
 
-    /** @type {import("$lib/types").Toast}*/
+    /** @type {import("./toast.type").Toast} */
     export let toast;
 </script>
 

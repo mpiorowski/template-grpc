@@ -51,19 +51,6 @@
     /** @type {boolean} */
     let openDrawer = false;
 
-    /** @typedef {{
-     * username: string;
-     * about: string;
-     * country: string;
-     * city: string;
-     * radio: string;
-     * checkbox: string[];
-     * switch: boolean;
-     * multi_select: string;
-     * resume: File;
-     * coverPhoto: File;
-     * }} User */
-
     /**
      * @type User
      */

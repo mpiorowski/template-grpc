@@ -41,8 +41,11 @@
     }
 }
 
+html {
+    @apply h-full;
+}
 body {
-    @apply font-poppins antialiased;
+    @apply h-full;
 }
 
 :focus {
@@ -62,13 +65,13 @@ p {
 }
 
 h1 {
-    @apply text-xl font-semibold text-gray-900;
+    @apply text-xl font-semibold;
 }
 
 h2 {
-    @apply text-lg font-semibold text-gray-900;
+    @apply text-lg font-semibold;
 }
 
 h3 {
-    @apply text-base font-semibold text-gray-900;
+    @apply text-base font-semibold;
 }

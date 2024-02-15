@@ -3,9 +3,9 @@
     import { scale } from "svelte/transition";
 
     /** @type {string} */
-    export let email;
+    export let avatarUrl;
     /** @type {string} */
-    export let avatar;
+    export let email;
 
     /** @type {boolean} */
     let open = false;
@@ -97,10 +97,10 @@
                 <span
                     class="inline-flex h-8 w-8 overflow-hidden rounded-full bg-gray-100 transition hover:bg-gray-200"
                 >
-                    {#if avatar}
+                    {#if avatarUrl}
                         <img
                             class="h-8 w-8 rounded-full"
-                            src={avatar}
+                            src={avatarUrl}
                             alt="Avatar"
                         />
                     {:else}
@@ -134,7 +134,7 @@
             use:portal
             in:scale={{ duration: 100, start: 0.95, opacity: 0 }}
             out:scale={{ duration: 75, start: 0.95, opacity: 0 }}
-            class="absolute right-0 z-10 mt-2 min-w-[240px] origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            class="absolute right-0 z-10 mt-2 min-w-[224px] origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             tabindex="-1"
             role="menu"
             aria-orientation="vertical"
@@ -142,40 +142,45 @@
         >
             <div class="divide-y divide-gray-100">
                 <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
-                <span
-                    class="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="menu-item-0"
-                >
-                    Signed in as <strong>{email}</strong>
-                </span>
+
+                <div class="py-1" role="none">
+                    <span
+                        class="block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="menu-item-0"
+                    >
+                        {email}
+                    </span>
+                </div>
                 <div class="py-1" role="none">
                     <a
                         on:mouseover={() => (active = 0)}
                         on:focus={() => (active = 0)}
                         on:click={() => (open = false)}
-                        href="/settings"
+                        href="https://github.com/mpiorowski/rusve"
+                        target="_blank"
                         class="block px-4 py-2 text-sm text-gray-700
                     {active === 0 ? 'bg-gray-100 text-gray-900' : ''}"
                         role="menuitem"
                         tabindex="-1"
                         id="menu-item-0"
                     >
-                        Settings
+                        GitHub
                     </a>
                     <a
                         on:mouseover={() => (active = 1)}
                         on:focus={() => (active = 1)}
                         on:click={() => (open = false)}
-                        href="/support"
+                        href="https://www.upsend.app/"
+                        target="_blank"
                         class="block px-4 py-2 text-sm text-gray-700
                     {active === 1 ? 'bg-gray-100 text-gray-900' : ''}"
                         role="menuitem"
                         tabindex="-1"
                         id="menu-item-1"
                     >
-                        Support
+                        UpSend
                     </a>
                 </div>
                 <div class="py-1" role="none">

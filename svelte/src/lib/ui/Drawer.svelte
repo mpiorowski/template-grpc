@@ -1,14 +1,12 @@
 <script>
     import { browser } from "$app/environment";
-    import Button from "$lib/form/Button.svelte";
     import { checkElement, generateId } from "$lib/helpers";
-    import XIcon from "$lib/icons/XIcon.svelte";
     import { fade, fly } from "svelte/transition";
 
     /** @type {boolean} */
     export let open;
     /** @type {string} */
-    export let title;
+    export let title = "";
     /** @type {"right" | "left"} */
     export let position = "right";
     /** @type {() => void} */
@@ -99,7 +97,7 @@
 </script>
 
 <div
-    class="relative z-10"
+    class="relative z-40"
     aria-labelledby="drawer-title-{id}"
     role="dialog"
     aria-modal="true"
@@ -116,7 +114,7 @@
   -->
     <div
         transition:fade
-        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
     />
 
     <div class="fixed inset-0 overflow-hidden">
@@ -147,14 +145,77 @@
                         duration: 400,
                         opacity: 100,
                     }}
-                    class="pointer-events-auto w-screen max-w-xl"
+                    class="pointer-events-auto relative w-screen max-w-xl"
                 >
+                    <!--
+                        Close button, show/hide based on slide-over state.
+
+                        Entering: "ease-in-out duration-500"
+                          From: "opacity-0"
+                          To: "opacity-100"
+                        Leaving: "ease-in-out duration-500"
+                          From: "opacity-100"
+                          To: "opacity-0"
+                      -->
                     <div
-                        class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                        class="absolute top-0 flex pt-4
+                            {position === 'left'
+                            ? 'right-0 -mr-8 pl-2 sm:-mr-10 sm:pl-4'
+                            : 'left-0 -ml-8 pr-2 sm:-ml-10 sm:pr-4'}"
+                        transition:fade
                     >
-                        <div
-                            class="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6"
+                        <button
+                            type="button"
+                            class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            on:click={close}
                         >
+                            <span class="absolute -inset-2.5"></span>
+                            <span class="sr-only">Close panel</span>
+                            <svg
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                    {#if title}
+                        <div
+                            class="flex h-full flex-col bg-gray-900 py-6 shadow-xl ring-1 ring-white/10"
+                        >
+                            <div class="px-4 sm:px-6">
+                                <h2
+                                    class="text-base font-semibold leading-6 text-gray-50"
+                                    id="slide-over-title"
+                                >
+                                    {title}
+                                </h2>
+                            </div>
+                            <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                                <slot />
+                            </div>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full flex-col bg-gray-900 shadow-xl ring-1 ring-white/10"
+                        >
+                            <slot />
+                        </div>
+                    {/if}
+
+                    <!--
+                    <div
+                        class="flex h-full flex-col divide-y overflow-y-scroll divide-gray-200 bg-gray-900 shadow-xl"
+                    >
+                        <div class="flex min-h-0 flex-1 flex-col py-6">
                             <div class="px-4 sm:px-6">
                                 <div class="flex items-start justify-between">
                                     <h2
@@ -163,19 +224,6 @@
                                     >
                                         {title}
                                     </h2>
-                                    <div class="ml-3 flex h-7 items-center">
-                                        <button
-                                            on:click={close}
-                                            type="button"
-                                            class="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
-                                        >
-                                            <span class="absolute -inset-2.5" />
-                                            <span class="sr-only">
-                                                Close panel
-                                            </span>
-                                            <XIcon />
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                             <div class="relative mt-6 flex-1 px-4 sm:px-6">
@@ -195,6 +243,7 @@
                             </div>
                         </div>
                     </div>
+                    -->
                 </div>
             </div>
         </div>
