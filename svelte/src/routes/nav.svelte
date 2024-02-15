@@ -1,6 +1,5 @@
 <script>
     import { page } from "$app/stores";
-    import SettingsIcon from "$lib/icons/SettingsIcon.svelte";
 
     /** @type {() => void} */
     export let close = () => {};
@@ -29,7 +28,7 @@
                     on:click={close}
                     href="/users"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
-                                    {current === 'dashboard'
+                    {current === 'users'
                         ? 'bg-gray-800 text-white'
                         : 'text-gray-400 hover:bg-gray-800 hover:text-white'}"
                 >
@@ -60,7 +59,7 @@
                     on:click={close}
                     href="/articles"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
-                                    {current === 'files'
+                    {current === 'articles'
                         ? 'bg-gray-800 text-white'
                         : 'text-gray-400 hover:bg-gray-800 hover:text-white'}"
                 >

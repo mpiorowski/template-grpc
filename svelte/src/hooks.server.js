@@ -4,8 +4,8 @@ import { redirect } from "@sveltejs/kit";
 export async function handle({ event, resolve }) {
 
     event.locals.user = {
-        email: "mat@gmail.com",
-        avatar: "https://avatars.githubusercontent.com/u/1?v=4"
+        email: "mateuszpiorowski@gmail.com",
+        avatar: "https://picsum.photos/200/300",
     };
 
     if (event.url.pathname === "/") {
