@@ -15,17 +15,24 @@
     import { generateId } from "$lib/helpers";
     import SelectNative from "$lib/form/SelectNative.svelte";
 
-    const select_native = /** @type {const} */ ([
-        "Native Option 1",
-        "Native Option 2",
-        "Native Option 3",
+    export const countries = /** @type {const} */ ([
+        "United States",
+        "Canada",
+        "Mexico",
     ]);
-    const select_custom = /** @type {const} */ ([
-        "Custom Option 1",
-        "Custom Option 2",
-        "Custom Option 3",
+    const cities = /** @type {const} */ ([
+        "New York",
+        "Los Angeles",
+        "Chicago",
     ]);
-
+    export const skills = /** @type {const} */ ([
+        "Frontend Development",
+        "Backend Development",
+        "UI/UX Design",
+        "DevOps",
+        "Database Administration",
+        "Mobile Development",
+    ]);
     const radio = /** @type {const} */ ([
         { value: "radio_1", label: "Radio Option 1" },
         { value: "radio_2", label: "Radio Option 2" },
@@ -37,13 +44,6 @@
         { value: "checkbox_2", label: "Checkbox Option 2" },
         { value: "checkbox_3", label: "Checkbox Option 3" },
     ]);
-    const multi_select = /** @type {const} */ ([
-        "Multi Option 1",
-        "Multi Option 2",
-        "Multi Option 3",
-        "Multi Option 4",
-        "Multi Option 5",
-    ]);
 
     /** @type {boolean} */
     let openModal = false;
@@ -52,26 +52,26 @@
     let openDrawer = false;
 
     /** @typedef {{
-     * input: string;
-     * textarea: string;
-     * select_native: string;
-     * select_custom: string;
+     * username: string;
+     * about: string;
+     * country: string;
+     * city: string;
      * radio: string;
      * checkbox: string[];
      * switch: boolean;
      * multi_select: string;
      * resume: File;
      * coverPhoto: File;
-     * }} Form */
+     * }} User */
 
     /**
-     * @type Form
+     * @type User
      */
     const form = {
-        input: "",
-        textarea: "",
-        select_native: "",
-        select_custom: select_custom[0],
+        username: "",
+        about: "",
+        country: "",
+        city: cities[0],
         switch: false,
         radio: radio[0].value,
         checkbox: [],
@@ -80,7 +80,7 @@
         coverPhoto: new File([""], ""),
     };
 
-    /** @type {Record<keyof Form, string>} */
+    /** @type {Record<keyof User, string>} */
     let fields = {
         input: "",
         textarea: "",
@@ -167,7 +167,7 @@
                 <h2
                     class="flex items-center gap-2 text-base font-semibold leading-7 text-gray-900"
                 >
-                    Basic Form
+                    Profile
                     <Tooltip
                         text="Basic form elements like input, textarea, select, etc."
                     >
@@ -188,37 +188,38 @@
                     </Tooltip>
                 </h2>
                 <p class="mt-1 text-sm leading-6 text-gray-600">
-                    Basic form elements like input, textarea, select, etc.
+                    This information will be displayed publicly so be careful
+                    what you share.
                 </p>
             </div>
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
                 <div class="sm:col-span-4">
                     <Input
-                        name="input"
-                        label="Input"
-                        bind:value={form.input}
-                        error={fields.input}
+                        name="username"
+                        label="Username"
+                        bind:value={form.username}
+                        error={fields.username}
                     />
                 </div>
 
                 <div class="col-span-full">
                     <Input
-                        name="textarea"
-                        label="Textarea"
-                        bind:value={form.textarea}
+                        name="about"
+                        label="About"
+                        bind:value={form.about}
                         rows={3}
                         helper="Write a few sentences about yourself."
-                        error={fields.textarea}
+                        error={fields.about}
                     />
                 </div>
 
                 <div class="sm:col-span-4">
                     <SelectNative
-                        name="select_native"
-                        label="Select Native"
-                        bind:value={form.select_native}
-                        error={fields.select_native}
+                        name="country"
+                        label="Country"
+                        bind:value={form.country}
+                        error={fields.country}
                     >
                         {#each select_native as val}
                             <option value={val}>
@@ -284,16 +285,16 @@
                         Choose one option from the list.
                     </p>
                     <div class="mt-6 space-y-6">
-                    {#each checkbox as c}
-                        <Checkbox
-                            id="checkbox-{c.value}"
-                            name="checkbox"
-                            label="{c.label}"
-                            value={c.value}
-                            group={form.checkbox}
-                            description="Checkbox description"
-                        />
-                    {/each}
+                        {#each checkbox as c}
+                            <Checkbox
+                                id="checkbox-{c.value}"
+                                name="checkbox"
+                                label={c.label}
+                                value={c.value}
+                                group={form.checkbox}
+                                description="Checkbox description"
+                            />
+                        {/each}
                     </div>
                 </fieldset>
                 <fieldset>
@@ -310,7 +311,7 @@
                             <Radio
                                 id="radio-{r.value}"
                                 name="radio_{i}"
-                                label="{r.label}"
+                                label={r.label}
                                 value={r.value}
                                 bind:group={form.radio}
                                 description="Radio {i + 1} description"
