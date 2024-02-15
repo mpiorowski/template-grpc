@@ -28,10 +28,7 @@
 </script>
 
 <div>
-    <label
-        for={name}
-        class="mb-2 block text-sm font-medium leading-6 text-gray-900"
-    >
+    <label for={name} class="mb-2 block text-sm font-medium leading-6">
         {label}
     </label>
     {#if rows === 0}
@@ -42,8 +39,8 @@
             {name}
             {placeholder}
             {autocomplete}
-            class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6
-                {error ? 'ring-2 ring-red-600' : ''}"
+            class="shadow-inset block w-full rounded-md border-0 bg-gray-800 px-3 py-1.5 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6
+                {error ? 'outline outline-1 outline-red-600' : ''}"
             aria-invalid={!!error}
             aria-describedby="{name}-description"
         />
@@ -54,15 +51,15 @@
             {name}
             {placeholder}
             {rows}
-            class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6
-                {error ? 'ring-2 ring-red-600' : ''}"
+            class="shadow-inset block w-full rounded-md border-0 bg-gray-800 px-3 py-1.5 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6
+                {error ? 'outline outline-1 outline-red-600' : ''}"
             aria-invalid={!!error}
             aria-describedby="{name}-description"
         />
     {/if}
     <p
         id="{name}-description"
-        class="mb-2 text-xs leading-6
+        class="pb-2 text-xs leading-6
         {error ? 'text-red-600' : 'text-gray-500'}"
     >
         {error || helper}

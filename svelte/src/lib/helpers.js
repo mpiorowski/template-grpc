@@ -26,7 +26,7 @@ export function checkElement(element) {
  * @param {string} field
  * @returns {string[]}
  */
-export function extractErrors(fields, field) {
+export function getError(fields, field) {
     if (!fields) {
         return [];
     }
@@ -36,4 +36,32 @@ export function extractErrors(fields, field) {
         }
     }
     return [];
+}
+
+/**
+ * Get the string from a form field
+ * @param {FormData} form
+ * @param {string} key
+ * @returns {string}
+ */
+export function getValue(form, key) {
+    const value = form.get(key);
+    if (!value || typeof value !== "string") {
+        return "";
+    }
+    return value;
+}
+
+/**
+ * Get the file from a form field
+ * @param {FormData} form
+ * @param {string} key
+ * @returns {File}
+ */
+export function getFile(form, key) {
+    const value = form.get(key);
+    if (!value || !(value instanceof File)) {
+        return new File([], "");
+    }
+    return value;
 }

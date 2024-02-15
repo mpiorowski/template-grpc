@@ -3,4 +3,4 @@
 </script>
 
 <h1>Users</h1>
-<Button>Add new user</Button>
+<Button href="/users/-1">Add new user</Button>
