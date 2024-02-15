@@ -15,7 +15,7 @@
     export let value;
     /** @type {readonly string[]} */
     export let options;
-    /** @type {string} */
+    /** @type {string | undefined} */
     export let error = "";
     /** @type {string} */
     export let helper = "";

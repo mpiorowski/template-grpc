@@ -9,7 +9,7 @@
     export let description;
     /** @type {string | undefined} */
     export let accept = "*/*";
-    /** @type {string} */
+    /** @type {string | undefined} */
     export let error = "";
     /** @type {string} */
     export let helper = "";

@@ -88,9 +88,9 @@
                     {toast.title}
                 </p>
                 {#if toast.description}
-                    <p class="mt-1 text-sm text-gray-500">
+                    <div class="mt-1 text-sm text-gray-500">
                         {toast.description}
-                    </p>
+                    </div>
                 {/if}
                 {#if toast.action}
                     <button

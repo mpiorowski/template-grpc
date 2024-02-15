@@ -16,11 +16,13 @@ services:
       ADMIN_PASSWORD: "A1m2n"
       DB_CLIENT: "sqlite3"
       DB_FILENAME: "/directus/database/data.db"
-      WEBSOCKETS_ENABLED: true
+      WEBSOCKETS_ENABLED:
+        true
+
         # CACHE_ENABLED: "true"
         # CACHE_STORE: "redis"
         # REDIS: "redis://cache:6379"
-        #
+
   svelte:
     container_name: svelte
     build:

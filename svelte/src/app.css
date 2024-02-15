@@ -57,6 +57,10 @@ body {
     min-width: 0;
 }
 
+p {
+    height: 1rem;
+}
+
 h1 {
     @apply text-xl font-semibold text-gray-900;
 }

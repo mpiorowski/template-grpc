@@ -34,7 +34,7 @@ export const toast = {
             title,
             description,
             type: "success",
-            duration: 4000,
+            duration: 5000,
         }),
     error: (title, description = "") =>
         showToast({
@@ -42,7 +42,7 @@ export const toast = {
             title,
             description,
             type: "error",
-            duration: 4000,
+            duration: 5000,
         }),
     warning: (title, description = "") =>
         showToast({
@@ -50,7 +50,7 @@ export const toast = {
             title,
             description,
             type: "warning",
-            duration: 4000,
+            duration: 5000,
         }),
     info: (title, description = "") =>
         showToast({
@@ -58,6 +58,6 @@ export const toast = {
             title,
             description,
             type: "info",
-            duration: 4000,
+            duration: 5000,
         }),
 };
