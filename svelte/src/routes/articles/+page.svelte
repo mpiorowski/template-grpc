@@ -8,7 +8,7 @@
     <h2 class="text-xl">Articles</h2>
     {#each articles as article}
         <li>
-            {article.title}
+            <h2>{article.title}</h2>
             <div class="rounded-xl border p-4">{@html article.content}</div>
         </li>
     {/each}
