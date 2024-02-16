@@ -1,9 +1,9 @@
 import {
     emptyUser,
     getUserById,
-    insertUser,
+    createUser,
 } from "$lib/server/services/user_service";
-import { error } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
@@ -18,7 +18,9 @@ export async function load({ params }) {
     return {
         user: {
             ...user.data,
-            resume: user.data.resume ? await user.data.resume.arrayBuffer() : "",
+            resume: user.data.resume
+                ? await user.data.resume.arrayBuffer()
+                : "",
             cover: user.data.cover ? await user.data.cover.arrayBuffer() : "",
         },
     };
@@ -26,8 +28,15 @@ export async function load({ params }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    insert_user: async ({ request }) => {
+    create_user: async ({ request, params }) => {
         const form = await request.formData();
-        return await insertUser(form);
+        const rest = await createUser(form, params.user_id);
+        if (!rest.success) {
+            return fail(500, { error: rest.error });
+        }
+        if (params.user_id === "-1") {
+            throw redirect(302, `/users?success=created`);
+        }
+        return { user: rest.data };
     },
 };

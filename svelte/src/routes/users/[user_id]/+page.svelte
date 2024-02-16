@@ -12,6 +12,7 @@
     import Tooltip from "$lib/ui/Tooltip.svelte";
     import SelectNative from "$lib/form/SelectNative.svelte";
     import { enhance } from "$app/forms";
+    import { toast } from "$lib/ui/toast.store";
 
     /** @type {import("./$types").PageData} */
     export let data;
@@ -52,13 +53,15 @@
 {/if}
 
 <form
-    action="?/insert_user"
+    action="?/create_user"
     method="post"
     enctype="multipart/form-data"
     class="max-w-2xl"
     use:enhance={() => {
         return async ({ result, update }) => {
             if (result.type === "success") {
+                toast.success("Saved", "User profile has been updated.");
+            } else {
                 // showToast({
                 //     id: generateId(),
                 //     title: "Validation failed",

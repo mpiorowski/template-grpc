@@ -4,7 +4,7 @@ import { safe } from "./safe";
  * API wrapper
  * @param {string} url
  * @param {{
- *  method?: "GET" | "POST" | "PUT" | "DELETE"
+ *  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
  *  body?: D
  *  }} options
  *  @returns {Promise<import("./safe.types").Safe<T>>}
