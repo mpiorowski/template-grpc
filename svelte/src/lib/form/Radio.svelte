@@ -26,8 +26,8 @@
         />
     </div>
     <div class="ml-3 text-sm leading-6">
-        <label for={id} class="font-medium text-gray-900">{label}</label>
-        <p id="{id}-description" class="text-gray-500">
+        <label for={id} class="font-medium">{label}</label>
+        <p id="{id}-description" class="text-gray-400">
             {description}
         </p>
     </div>

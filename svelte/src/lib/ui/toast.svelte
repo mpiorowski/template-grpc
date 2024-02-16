@@ -88,7 +88,7 @@
                     {toast.title}
                 </p>
                 {#if toast.description}
-                    <div class="mt-1 text-sm text-gray-500">
+                    <div class="mt-1 text-sm text-gray-400">
                         {toast.description}
                     </div>
                 {/if}
@@ -107,7 +107,7 @@
             <div class="ml-4 flex flex-shrink-0">
                 <button
                     type="button"
-                    class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     on:click={() => {
                         toastStore.update((toasts) => {
                             return toasts.filter((t) => t.id !== toast.id);

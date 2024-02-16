@@ -8,7 +8,7 @@
     <ol role="list" class="flex items-center space-x-4">
         <li>
             <div>
-                <a href="/" class="text-gray-400 hover:text-gray-500">
+                <a href="/" class="text-gray-400 hover:text-gray-400">
                     <svg
                         class="h-5 w-5 flex-shrink-0"
                         viewBox="0 0 20 20"
@@ -42,7 +42,7 @@
                     </svg>
                     <a
                         href="/{url.slice(0, index + 1).join("/")}"
-                        class="ml-4 text-sm font-medium text-gray-400 hover:text-gray-500"
+                        class="ml-4 text-sm font-medium text-gray-400 hover:text-gray-400"
                     >
                         {String(el).charAt(0).toUpperCase() +
                             String(el).slice(1)}

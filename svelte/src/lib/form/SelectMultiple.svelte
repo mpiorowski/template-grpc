@@ -112,7 +112,7 @@
             on:click|stopPropagation={() => (open = !open)}
             id={name}
             type="button"
-            class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6
+            class="relative w-full cursor-default rounded-md bg-gray-800 py-1.5 pl-3 pr-10 text-left shadow-inset focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6
             {error && 'ring-2 ring-red-600'}"
             aria-haspopup="listbox"
             aria-describedby="{name}-description"
@@ -213,8 +213,8 @@
     </div>
     <p
         id="{name}-description"
-        class="text-xs leading-6 inline-block 
-        {error ? 'text-red-600' : 'text-gray-500'}"
+        class="inline-block text-xs leading-6
+        {error ? 'text-red-600' : 'text-gray-400'}"
     >
         {error || helper}
     </p>

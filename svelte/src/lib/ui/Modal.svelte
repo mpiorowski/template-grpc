@@ -168,7 +168,7 @@
                             {title}
                         </h3>
                         <div class="mt-2" id="modal-description-{id}">
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-gray-400">
                                 {description}
                             </p>
                         </div>

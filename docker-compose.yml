@@ -16,9 +16,9 @@ services:
       ADMIN_PASSWORD: "A1m2n"
       DB_CLIENT: "sqlite3"
       DB_FILENAME: "/directus/database/data.db"
-      WEBSOCKETS_ENABLED:
-        true
-
+      WEBSOCKETS_ENABLED: true
+      PUBLIC_URL:
+        http://0.0.0.0:8055
         # CACHE_ENABLED: "true"
         # CACHE_STORE: "redis"
         # REDIS: "redis://cache:6379"

@@ -5,12 +5,16 @@ import { safe } from "./safe";
  * @param {string} url
  * @param {{
  *  method?: "GET" | "POST" | "PUT" | "DELETE"
- *  body?: string
+ *  body?: D
  *  }} options
  *  @returns {Promise<import("./safe.types").Safe<T>>}
  *  @template T
+ *  @template D = T
  */
-export default async function api(url, { method = "GET", body = undefined } = {}) {
+export default async function api(
+    url,
+    { method = "GET", body = undefined } = {},
+) {
     const res = await safe(
         fetch(url, {
             method,

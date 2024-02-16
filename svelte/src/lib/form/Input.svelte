@@ -60,7 +60,7 @@
     <p
         id="{name}-description"
         class="pb-2 text-xs leading-6
-        {error ? 'text-red-600' : 'text-gray-500'}"
+        {error ? 'text-red-600' : 'text-gray-400'}"
     >
         {error || helper}
     </p>

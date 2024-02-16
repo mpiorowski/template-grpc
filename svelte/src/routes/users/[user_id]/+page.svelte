@@ -3,7 +3,7 @@
     import Input from "$lib/form/Input.svelte";
     import Checkbox from "$lib/form/Checkbox.svelte";
     import Radio from "$lib/form/Radio.svelte";
-    import Select from "$lib/form/Select.svelte";
+    import SelectCustom from "$lib/form/SelectCustom.svelte";
     import Switch from "$lib/form/Switch.svelte";
     import Dropzone from "$lib/form/Dropzone.svelte";
     import FileInput from "$lib/form/FileInput.svelte";
@@ -17,6 +17,7 @@
     export let data;
 
     export const countries = /** @type {const} */ ([
+        "Poland",
         "United States",
         "Canada",
         "Mexico",
@@ -32,6 +33,9 @@
 
     /** @type {boolean} */
     let openModal = false;
+
+    $: resume_file = new File([data.user.resume], "resume");
+    $: cover_file = new File([data.user.cover], "cover");
 </script>
 
 {#if openModal}
@@ -50,6 +54,7 @@
 <form
     action="?/insert_user"
     method="post"
+    enctype="multipart/form-data"
     class="max-w-2xl"
     use:enhance={() => {
         return async ({ result, update }) => {
@@ -73,7 +78,6 @@
                 // });
             }
             await update();
-            history.back();
         };
     }}
 >
@@ -140,16 +144,16 @@
                     <FileInput
                         label="Resume"
                         name="resume"
-                        bind:file={data.user.resume}
+                        bind:file={resume_file}
                         helper="PDF up to 5MB"
                     />
                 </div>
 
-                <div class="col-span-full mt-6">
+                <div class="col-span-full">
                     <Dropzone
                         name="cover"
                         label="Cover photo"
-                        bind:file={data.user.cover}
+                        bind:file={cover_file}
                         description="SVG, PNG, JPG, GIF up to 10MB"
                         accept="image/*"
                     />
@@ -388,7 +392,7 @@
                 Share your profesional details so others can find you.
             </p>
             <div class="mt-6">
-                <Select
+                <SelectCustom
                     name="position"
                     label="Position"
                     bind:value={data.user.position}

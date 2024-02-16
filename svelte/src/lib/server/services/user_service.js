@@ -27,7 +27,7 @@ import { logger, perf } from "$lib/server/logger";
  */
 
 /**
- * @type {Omit<User, "resume" | "cover">}
+ * @type {User}
  */
 export const emptyUser = {
     id: "",
@@ -44,6 +44,8 @@ export const emptyUser = {
     zip: "",
     email_notifications: [],
     push_notification: "",
+    resume: new File([], ""),
+    cover: new File([], ""),
     position: "",
     skills: "",
 };
@@ -91,9 +93,8 @@ export async function getUserById(id) {
 export async function insertUser(form_data) {
     const end = perf("insert_user");
 
-    /** @type {User} */
+    /** @type {Omit<User, "id">} */
     const user = {
-        id: "",
         active: getValue(form_data, "active"),
         username: getValue(form_data, "username"),
         about: getValue(form_data, "about"),
@@ -113,9 +114,9 @@ export async function insertUser(form_data) {
         skills: getValue(form_data, "skills"),
     };
 
-    const data = await api(DIRECTUS_URL + "/items/user", {
+    const data = await api(DIRECTUS_URL + "/items/users", {
         method: "POST",
-        body: JSON.stringify(user),
+        body: user,
     });
     if (!data.success) {
         logger.error("Error creating user", data.error);

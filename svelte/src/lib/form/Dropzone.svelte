@@ -30,14 +30,14 @@
 </script>
 
 <div class="mb-2">
-    <label for={name} class="block text-sm font-medium leading-6 text-gray-900">
+    <label for={name} class="block text-sm font-medium leading-6">
         {label}
     </label>
     <label
         id={label}
         for={name}
-        class="mt-2 flex h-[200px] cursor-pointer justify-center rounded-lg border border-dashed border-gray-900/25
-        focus-within:border-0 focus-within:ring-2 focus-within:ring-indigo-600 hover:bg-gray-200/25
+        class="mt-2 flex h-[200px] cursor-pointer justify-center rounded-lg border border-dashed border-gray-600
+        focus-within:border-0 focus-within:ring-2 focus-within:ring-indigo-600 hover:bg-gray-800
         {error ? 'border-0 ring-2 ring-red-600' : ''}"
     >
         <input
@@ -81,7 +81,7 @@
                             Click to upload an image
                         </span>
                     </div>
-                    <p class="text-xs leading-5 text-gray-500">
+                    <p class="text-xs leading-5 text-gray-400">
                         {description}
                     </p>
                 {/if}
@@ -91,7 +91,7 @@
     <p
         id="{name}-description"
         class="inline-block text-xs leading-6
-        {error ? 'text-red-600' : 'text-gray-500'}"
+        {error ? 'text-red-600' : 'text-gray-400'}"
     >
         {error || helper}
     </p>
