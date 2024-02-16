@@ -1,6 +1,30 @@
+<script>
+    import { enhance } from "$app/forms";
+    import { toast } from "$lib/ui/toast.store";
+</script>
+
 <div class="relative isolate bg-gray-900">
     <div class="mx-auto grid max-w-7xl grid-cols-1 lg:grid-cols-2">
-        <form action="#" method="POST">
+        <form
+            action="?/contact"
+            method="post"
+            use:enhance={() => {
+                return async ({ result, update }) => {
+                    if (result.type === "success") {
+                        toast.success(
+                            "Send",
+                            "Your message has been sent successfully.",
+                        );
+                    } else {
+                        toast.error(
+                            "Send",
+                            "An error occurred while sending your message.",
+                        );
+                    }
+                    await update();
+                };
+            }}
+        >
             <div class="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
                 <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                     <div>
@@ -13,7 +37,7 @@
                         <div class="mt-2.5">
                             <input
                                 type="text"
-                                name="first-name"
+                                name="first_name"
                                 id="first-name"
                                 autocomplete="given-name"
                                 class="block w-full rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
@@ -30,7 +54,7 @@
                         <div class="mt-2.5">
                             <input
                                 type="text"
-                                name="last-name"
+                                name="last_name"
                                 id="last-name"
                                 autocomplete="family-name"
                                 class="block w-full rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
@@ -64,7 +88,7 @@
                         <div class="mt-2.5">
                             <input
                                 type="tel"
-                                name="phone-number"
+                                name="phone"
                                 id="phone-number"
                                 autocomplete="tel"
                                 class="block w-full rounded-md border-0 bg-white/5 px-3.5 py-2 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"

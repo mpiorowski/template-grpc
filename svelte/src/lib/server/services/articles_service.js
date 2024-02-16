@@ -4,11 +4,11 @@ import { logger, perf } from "$lib/server/logger";
 
 /**
  * @typedef {{
- *   id: number
- *   status: string
- *   title: string
- *   content: string
- *   image: string
+ * id: number;
+ * status: string;
+ * title: string;
+ * content: string;
+ * image: string;
  * }} Article
  */
 
@@ -17,14 +17,14 @@ import { logger, perf } from "$lib/server/logger";
  * @returns {Promise<import("../safe.types").Safe<Article[]>>}
  */
 export async function getAllArticles() {
-    const end = perf("getAllArticles");
+    const end = perf("get_all_articles");
     /** @type {import("../safe.types").Safe<{data: Article[]}>} */
-    const data = await api(DIRECTUS_URL + "/items/articles");
-    if (!data.success) {
-        logger.error(`Failed to get articles: ${data.error}`);
-        return { success: false, error: data.error };
+    const r = await api(DIRECTUS_URL + "/items/articles");
+    if (!r.success) {
+        logger.error(r.error, "Error getting all articles");
+        return { success: false, error: r.error };
     }
-    logger.debug(data, "articles");
+    logger.debug(r, "get_all_articles");
     end();
-    return { success: true, data: data.data.data };
+    return { success: true, data: r.data.data };
 }

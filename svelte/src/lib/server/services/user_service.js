@@ -5,25 +5,25 @@ import { logger, perf } from "$lib/server/logger";
 
 /**
  * @typedef {{
- * id: string;
- * date_updated: string;
- * active: string;
- * username: string;
- * about: string;
- * first_name: string;
- * last_name: string;
- * email: string;
- * country: string;
- * street_address: string;
- * city: string;
- * state: string;
- * zip: string;
- * email_notifications: string[];
- * push_notification: string;
- * resume: File;
- * cover: File;
- * position: string;
- * skills: string;
+ * id: string
+ * date_updated: string
+ * active: string
+ * username: string
+ * about: string
+ * first_name: string
+ * last_name: string
+ * email: string
+ * country: string
+ * street_address: string
+ * city: string
+ * state: string
+ * zip: string
+ * email_notifications: string[]
+ * push_notification: string
+ * resume: File
+ * cover: File
+ * position: string
+ * skills: string
  * }} User
  */
 
@@ -59,18 +59,21 @@ export const emptyUser = {
 export async function getAllUsers() {
     const end = perf("get_all_users");
     /** @type {import("../safe.types").Safe<{data: User[]}>} */
-    const data = await api(DIRECTUS_URL + "/items/users");
-    if (!data.success) {
-        logger.error("Error getting users", data.error);
+    const r = await api(DIRECTUS_URL + "/items/users");
+    if (!r.success) {
+        logger.error(r.error, "Error getting all users");
         return { success: false, error: "Error getting users" };
     }
-    let users = data.data.data.sort((a, b) => {
+    let users = r.data.data.sort((a, b) => {
         // date_updated is a string, so we need to convert it to a number
-        return new Date(b.date_updated).getTime() - new Date(a.date_updated).getTime();
+        return (
+            new Date(b.date_updated).getTime() -
+            new Date(a.date_updated).getTime()
+        );
     });
 
     end();
-    logger.debug(data, "get_all_users");
+    logger.debug(users, "get_all_users");
     return { success: true, data: users };
 }
 
@@ -82,14 +85,14 @@ export async function getAllUsers() {
 export async function getUserById(id) {
     const end = perf("get_user_by_id");
     /** @type {import("../safe.types").Safe<{data: User}>} */
-    const data = await api(DIRECTUS_URL + "/items/users/" + id);
-    if (!data.success) {
-        logger.error("Error getting user", data.error);
+    const r = await api(DIRECTUS_URL + "/items/users/" + id);
+    if (!r.success) {
+        logger.error(r.error, "Error getting user");
         return { success: false, error: "Error getting user" };
     }
     end();
-    logger.debug(data, "get_user_by_id");
-    return { success: true, data: data.data.data };
+    logger.debug(r, "get_user_by_id");
+    return { success: true, data: r.data.data };
 }
 
 /**
@@ -121,26 +124,25 @@ export async function createUser(form_data, id) {
         position: getValue(form_data, "position"),
         skills: getValue(form_data, "skills"),
     };
-    logger.debug(user, "create_user");
 
     /** @type {import("../safe.types").Safe<{data: User}>} */
-    let data;
+    let r;
     if (id !== "-1") {
-        data = await api(DIRECTUS_URL + "/items/users/" + id, {
+        r = await api(DIRECTUS_URL + "/items/users/" + id, {
             method: "PATCH",
             body: user,
         });
     } else {
-        data = await api(DIRECTUS_URL + "/items/users", {
+        r = await api(DIRECTUS_URL + "/items/users", {
             method: "POST",
             body: user,
         });
     }
-    if (!data.success) {
-        logger.error("Error creating user", data.error);
+    if (!r.success) {
+        logger.error(r.error, "Error creating user");
         return { success: false, error: "Error creating user" };
     }
     end();
-    logger.debug(data, "create_user");
-    return { success: true, data: data.data.data };
+    logger.debug(r, "create_user");
+    return { success: true, data: r.data.data };
 }

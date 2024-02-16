@@ -10,18 +10,21 @@ services:
       - ./directus/uploads:/directus/uploads
       - ./directus/extensions:/directus/extensions
     environment:
-      KEY: "jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi"
-      SECRET: "sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje"
-      ADMIN_EMAIL: "admin@gmail.com"
-      ADMIN_PASSWORD: "A1m2n"
-      DB_CLIENT: "sqlite3"
-      DB_FILENAME: "/directus/database/data.db"
+      KEY: jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi
+      SECRET: sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje
+      ADMIN_EMAIL: admin@gmail.com
+      ADMIN_PASSWORD: A1m2n
+      DB_CLIENT: sqlite3
+      DB_FILENAME: /directus/database/data.db
+      EMAIL_VERIFY_SETUP: true
+      EMAIL_TRANSPORT: sendgrid
+      EMAIL_FROM: email@upsend.app
+      EMAIL_SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       WEBSOCKETS_ENABLED: true
-      PUBLIC_URL:
-        http://0.0.0.0:8055
-        # CACHE_ENABLED: "true"
-        # CACHE_STORE: "redis"
-        # REDIS: "redis://cache:6379"
+      PUBLIC_URL: http://0.0.0.0:8055
+      # CACHE_ENABLED: "true"
+      # CACHE_STORE: "redis"
+      # REDIS: "redis://cache:6379"
 
   svelte:
     container_name: svelte
