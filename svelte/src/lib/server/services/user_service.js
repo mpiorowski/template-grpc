@@ -1,5 +1,5 @@
 import { DIRECTUS_URL } from "$env/static/private";
-import { getFile, getValue } from "$lib/helpers";
+import { getAllValues, getFile, getValue } from "$lib/helpers";
 import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 
@@ -114,13 +114,14 @@ export async function createUser(form_data, id) {
         city: getValue(form_data, "city"),
         state: getValue(form_data, "state"),
         zip: getValue(form_data, "zip"),
-        email_notifications: [],
+        email_notifications: getAllValues(form_data, "email_notifications"),
         push_notification: getValue(form_data, "push_notification"),
         resume: getFile(form_data, "avatar"),
         cover: getFile(form_data, "cover"),
         position: getValue(form_data, "position"),
         skills: getValue(form_data, "skills"),
     };
+    logger.debug(user, "create_user");
 
     /** @type {import("../safe.types").Safe<{data: User}>} */
     let data;

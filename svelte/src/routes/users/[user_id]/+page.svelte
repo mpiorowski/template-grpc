@@ -80,12 +80,12 @@
                 //     },
                 // });
             }
-            await update();
+            await update({ reset: false });
         };
     }}
 >
     <div class="space-y-12">
-        <div class="border-b border-gray-900/10 pb-12">
+        <div class="border-b border-gray-600 pb-12">
             <div>
                 <h2
                     class="flex items-center gap-2 text-base font-semibold leading-7"
@@ -164,7 +164,7 @@
             </div>
         </div>
 
-        <div class="border-b border-gray-900/10 pb-6">
+        <div class="border-b border-gray-600 pb-6">
             <h2
                 class="flex items-center gap-2 text-base font-semibold leading-7"
             >
@@ -273,7 +273,7 @@
             </div>
         </div>
 
-        <div class="border-b border-gray-900/10 pb-12">
+        <div class="border-b border-gray-600 pb-12">
             <h2
                 class="flex items-center gap-2 text-base font-semibold leading-7"
             >
@@ -310,7 +310,7 @@
                     <div class="mt-6 space-y-6">
                         <Checkbox
                             id="comments"
-                            name="comments"
+                            name="email_notifications"
                             value="comments"
                             label="Comments"
                             bind:group={data.user.email_notifications}
@@ -318,7 +318,7 @@
                         />
                         <Checkbox
                             id="candidates"
-                            name="candidates"
+                            name="email_notifications"
                             value="candidates"
                             label="Candidates"
                             bind:group={data.user.email_notifications}
@@ -326,7 +326,7 @@
                         />
                         <Checkbox
                             id="offers"
-                            name="offers"
+                            name="email_notifications"
                             value="offers"
                             label="Offers"
                             bind:group={data.user.email_notifications}
@@ -403,14 +403,12 @@
                     options={["Frontend Developer", "Backend Developer"]}
                 />
             </div>
-            <div class="mt-6">
-                <SelectMultiple
-                    name="skills"
-                    label="Skills"
-                    bind:value={data.user.skills}
-                    options={skills}
-                />
-            </div>
+            <SelectMultiple
+                name="skills"
+                label="Skills"
+                bind:value={data.user.skills}
+                options={skills}
+            />
         </div>
     </div>
 

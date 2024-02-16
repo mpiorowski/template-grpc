@@ -8,6 +8,7 @@ import { logger, perf } from "$lib/server/logger";
  *   status: string
  *   title: string
  *   content: string
+ *   image: string
  * }} Article
  */
 
@@ -23,6 +24,7 @@ export async function getAllArticles() {
         logger.error(`Failed to get articles: ${data.error}`);
         return { success: false, error: data.error };
     }
+    logger.debug(data, "articles");
     end();
     return { success: true, data: data.data.data };
 }

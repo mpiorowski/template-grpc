@@ -53,6 +53,23 @@ export function getValue(form, key) {
 }
 
 /**
+ * Get all values from a form field
+ * @param {FormData} form
+ * @param {string} key
+ * @returns {string[]}
+ */
+export function getAllValues(form, key) {
+    const values = form.getAll(key);
+    let result = [];
+    for (const value of values) {
+        if (typeof value === "string") {
+            result.push(value);
+        }
+    }
+    return result;
+}
+
+/**
  * Get the file from a form field
  * @param {FormData} form
  * @param {string} key

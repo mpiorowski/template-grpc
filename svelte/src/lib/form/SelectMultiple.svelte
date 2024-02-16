@@ -101,7 +101,7 @@
 <div>
     <label
         id="{name}-label"
-        class="block text-sm font-medium leading-6 text-gray-900"
+        class="block text-sm font-medium leading-6"
         for={name}
     >
         {label}
