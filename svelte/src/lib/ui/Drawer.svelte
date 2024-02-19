@@ -189,7 +189,7 @@
                     </div>
                     {#if title}
                         <div
-                            class="flex h-full flex-col bg-gray-900 py-6 shadow-xl ring-1 ring-white/10"
+                            class="flex h-full flex-col overflow-y-scroll bg-gray-900 py-6 shadow-xl ring-1 ring-white/10"
                         >
                             <div class="px-4 sm:px-6">
                                 <h2
@@ -205,7 +205,7 @@
                         </div>
                     {:else}
                         <div
-                            class="flex h-full flex-col bg-gray-900 shadow-xl ring-1 ring-white/10"
+                            class="flex h-full flex-col overflow-y-scroll bg-gray-900 shadow-xl ring-1 ring-white/10"
                         >
                             <slot />
                         </div>
