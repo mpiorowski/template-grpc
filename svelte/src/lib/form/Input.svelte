@@ -59,9 +59,9 @@
     {/if}
     <p
         id="{name}-description"
-        class="pb-2 text-xs leading-6
+        class="block mb-2 text-sm leading-6
         {error ? 'text-red-600' : 'text-gray-400'}"
     >
-        {error || helper}
+        {error || helper}&#8203;
     </p>
 </div>
