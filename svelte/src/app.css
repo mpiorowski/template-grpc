@@ -41,27 +41,16 @@
     }
 }
 
-html {
-    @apply h-full;
-}
-body {
-    @apply h-full;
-}
-
-:focus {
-    outline: none;
-}
-
-.no-scroll {
-    overflow: hidden;
-}
-
 * {
     min-width: 0;
 }
 
-p {
-    height: 1rem;
+html {
+    @apply h-full antialiased;
+}
+
+body {
+    @apply h-full font-poppins text-gray-100;
 }
 
 h1 {
@@ -75,3 +64,18 @@ h2 {
 h3 {
     @apply text-xl font-semibold;
 }
+
+p {
+    height: 1rem;
+}
+
+:focus {
+    outline: none;
+}
+.no-scroll {
+    overflow: hidden;
+}
+.scroll {
+    overflow-y: scroll;
+}
+
