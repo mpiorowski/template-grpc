@@ -1,15 +1,25 @@
 import { TARGET } from "$env/static/private";
 import pino from "pino";
 
-export const logger = pino({
-    transport: {
-        target: "pino-pretty",
-        options: {
-            colorize: true,
-        },
-    },
-    level: TARGET === "production" ? "info" : "debug",
-});
+function get_pino_config() {
+    if (TARGET === "development") {
+        return {
+            transport: {
+                target: "pino-pretty",
+                options: {
+                    colorize: true,
+                },
+            },
+            level: "debug",
+        };
+    } else {
+        return {
+            level: "info",
+        };
+    }
+}
+
+export const logger = pino(get_pino_config());
 
 /**
  * Measure the performance
