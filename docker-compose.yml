@@ -1,4 +1,48 @@
 services:
+  svelte:
+    container_name: svelte
+    build:
+      context: ./svelte
+    depends_on:
+      - directus
+    volumes:
+      - ./svelte/src:/client/src
+      - ./svelte/.svelte-kit:/client/.svelte-kit
+    ports:
+      - 3000:3000
+
+  go:
+    container_name: go
+    working_dir: /server
+    build:
+      context: ./service-users
+      target: dev
+    volumes:
+      - ./service-users:/server
+    ports:
+      - 3001:3001
+      - 3002:3002
+    environment:
+      LOG_LEVEL: debug
+      HTTP_PORT: 3001
+      GRPC_PORT: 3002
+      COOKIE_DOMAIN: localhost
+      CLIENT_URL: http://localhost:3000
+      SERVER_HTTP: http://localhost:3001
+      REDIS_URL: redis:6379
+      REDIS_PASSWORD: 12345
+      TLS: "true"
+      CERT_PATH: /etc/letsencrypt/live/example.com/fullchain.pem
+      KEY_PATH: /etc/letsencrypt/live/example.com/privkey.pem
+      JWT_SECRET: ${JWT_SECRET}
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_PRICE_ID: price_1OmhP6HRNcZGXxTidRkfuTFr
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET} 
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+    command: sh -c "go run /server/."
+
   directus:
     container_name: directus
     build:
@@ -25,15 +69,3 @@ services:
       # CACHE_ENABLED: "true"
       # CACHE_STORE: "redis"
       # REDIS: "redis://cache:6379"
-
-  svelte:
-    container_name: svelte
-    build:
-      context: ./svelte
-    depends_on:
-      - directus
-    volumes:
-      - ./svelte/src:/client/src
-      - ./svelte/.svelte-kit:/client/.svelte-kit
-    ports:
-      - 3000:3000
