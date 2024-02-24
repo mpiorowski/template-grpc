@@ -1,0 +1,26 @@
+syntax = "proto3";
+option go_package = "powerit/proto";
+package proto;
+
+enum UserRole {
+    ROLE_UNSET = 0;
+    ROLE_USER = 1;
+    ROLE_ADMIN = 2;
+}
+
+message User {
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    string deleted = 4;
+
+    string email = 5;
+    string sub = 6;
+    UserRole role = 7;
+    string avatar = 8;
+
+    string subscription_id = 9;
+    string subscription_end = 10;
+    string subscription_check = 11;
+    bool subscription_active = 12;
+}

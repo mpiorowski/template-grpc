@@ -1,8 +1,8 @@
 services:
-  svelte:
-    container_name: svelte
+  client:
+    container_name: template-client
     build:
-      context: ./svelte
+      context: ./client
       target: dev
       args:
         TARGET: development
@@ -11,20 +11,20 @@ services:
     depends_on:
       - directus
     volumes:
-      - ./svelte/src:/client/src
-      - ./svelte/.svelte-kit:/client/.svelte-kit
+      - ./client/src:/client/src
+      - ./client/.svelte-kit:/client/.svelte-kit
     ports:
       - 3000:3000
     command: sh -c "npm run dev"
 
-  go:
+  service-users:
     container_name: go
     working_dir: /server
     build:
-      context: ./go
+      context: ./service-users
       target: dev
     volumes:
-      - ./go:/server
+      - ./service-users:/server
     ports:
       - 3001:3001
       - 3002:3002
