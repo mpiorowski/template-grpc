@@ -23,7 +23,7 @@ import (
  * 6. Get user from database
  * 7. Return user and new phantom token
  */
-func UserAuth(ctx context.Context) (*pb.User, string, error) {
+func Auth(ctx context.Context) (*pb.User, string, error) {
 	claims, err := extractToken(ctx)
 	if err != nil {
 		return nil, "", fmt.Errorf("extractToken: %w", err)
@@ -54,27 +54,6 @@ func UserAuth(ctx context.Context) (*pb.User, string, error) {
 	subscribed := checkIfSubscribed(user)
 	user.SubscriptionActive = subscribed
 	return user, tokenId.String(), nil
-}
-
-func GetAdminUsers(stream pb.UsersService_GetAdminUsersServer) error {
-	userChan := make(chan *pb.User)
-	errChan := make(chan error, 1)
-	go selectAllUsers(userChan, errChan)
-
-	// Stream users to client
-	for user := range userChan {
-		err := stream.Send(user)
-		if err != nil {
-			return fmt.Errorf("stream.Send: %w", err)
-		}
-	}
-
-	// Check for errors
-	err := <-errChan
-	if err != nil {
-		return fmt.Errorf("errChan: %w", err)
-	}
-	return nil
 }
 
 func GetUser(ctx context.Context) (*pb.User, error) {

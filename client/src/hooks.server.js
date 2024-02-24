@@ -25,7 +25,6 @@ export async function handle({ event, resolve }) {
 
     if (event.url.pathname === "/auth") {
         event.cookies.set("token", "", {
-            domain: COOKIE_DOMAIN,
             path: "/",
             maxAge: 0,
         });
@@ -40,12 +39,11 @@ export async function handle({ event, resolve }) {
     let token = event.url.searchParams.get("token");
     if (token) {
         event.cookies.set("token", token, {
-            domain: COOKIE_DOMAIN,
             path: "/",
-            // 10 seconds, it should be enough to be read by the backend on the next request
             maxAge: 10,
+            domain: "localhost",
         });
-        throw redirect(302, "/readings");
+        throw redirect(302, "/articles");
     }
 
     token = event.cookies.get("token") ?? "";
@@ -55,11 +53,11 @@ export async function handle({ event, resolve }) {
     }
 
     const metadata = createMetadata(token);
-    /** @type {import("$lib/safe").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
+    /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
     const auth = await new Promise((res) => {
         usersService.Auth({}, metadata, grpcSafe(res));
     });
-    if (auth.error || !auth.data.token || !auth.data.user) {
+    if (!auth.success || !auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
         throw redirect(302, "/auth");
     }
@@ -69,7 +67,7 @@ export async function handle({ event, resolve }) {
     logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/readings");
+        throw redirect(302, "/articles");
     }
 
     end();
@@ -77,7 +75,7 @@ export async function handle({ event, resolve }) {
     // max age is 30 days
     response.headers.append(
         "set-cookie",
-        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/; Domain=${COOKIE_DOMAIN}`,
+        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/; Domain=localhost;`
     );
     return response;
 }

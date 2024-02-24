@@ -13,7 +13,6 @@ export interface ProtoGrpcType {
     Count: MessageTypeDefinition
     Empty: MessageTypeDefinition
     Id: MessageTypeDefinition
-    Page: MessageTypeDefinition
     StripeUrlResponse: MessageTypeDefinition
     User: MessageTypeDefinition
     UserRole: EnumTypeDefinition

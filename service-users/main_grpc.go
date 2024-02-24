@@ -14,7 +14,7 @@ import (
 
 func (s *server) Auth(ctx context.Context, in *pb.Empty) (*pb.AuthResponse, error) {
 	start := time.Now()
-	user, token, err := users.UserAuth(ctx)
+	user, token, err := users.Auth(ctx)
 	if err != nil {
 		slog.Error("Error authorizing user", "users.UserAuth", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
@@ -25,24 +25,6 @@ func (s *server) Auth(ctx context.Context, in *pb.Empty) (*pb.AuthResponse, erro
 		Token: token,
 		User:  user,
 	}, nil
-}
-
-// GetAdminUsers (stream)
-func (s *server) GetAdminUsers(in *pb.Empty, stream pb.UsersService_GetAdminUsersServer) error {
-	start := time.Now()
-	user, err := users.GetUser(stream.Context())
-    if err != nil || user.Role != pb.UserRole_ROLE_ADMIN {
-        slog.Error("Error authorizing user", "users.UserAuth", err)
-        return status.Error(codes.Unauthenticated, "Unauthenticated")
-    }
-	err = users.GetAdminUsers(stream)
-	if err != nil {
-		slog.Error("Error getting admin users", "users.GetAdminUsers", err)
-		return err
-	}
-
-	slog.Info("get_admin_users", "time", time.Since(start))
-	return nil
 }
 
 func (s *server) CreateStripeCheckout(ctx context.Context, in *pb.Empty) (*pb.StripeUrlResponse, error) {

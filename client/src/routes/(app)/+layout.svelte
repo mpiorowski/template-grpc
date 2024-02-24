@@ -106,7 +106,7 @@
                     />
 
                     <!-- Profile dropdown -->
-                    <Avatar email={data.email} avatar={data.avatar} first_name={data.first_name} last_name={data.last_name} />
+                    <Avatar email={data.email} avatar={data.avatar}  />
                 </div>
             </div>
         </div>

@@ -8,10 +8,14 @@ COPY package-lock.json /client/package-lock.json
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
+ARG JWT_SECRET
+RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
 ARG PUBLIC_AUTH_HTTP 
 RUN echo "PUBLIC_AUTH_HTTP=${PUBLIC_AUTH_HTTP}" >> .env
 ARG DIRECTUS_URL
 RUN echo "DIRECTUS_URL=${DIRECTUS_URL}" >> .env
+ARG USERS_URI
+RUN echo "USERS_URI=${USERS_URI}" >> .env
 
 RUN npm install
 
@@ -26,10 +30,14 @@ COPY package-lock.json /client/package-lock.json
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
+ARG JWT_SECRET
+RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
 ARG PUBLIC_AUTH_HTTP 
 RUN echo "PUBLIC_AUTH_HTTP=${PUBLIC_AUTH_HTTP}" >> .env
 ARG DIRECTUS_URL
 RUN echo "DIRECTUS_URL=${DIRECTUS_URL}" >> .env
+ARG USERS_URI
+RUN echo "USERS_URI=${USERS_URI}" >> .env
 
 RUN npm install
 COPY . .

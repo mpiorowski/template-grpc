@@ -6,8 +6,10 @@ services:
       target: dev
       args:
         TARGET: development
+        JWT_SECRET: ${JWT_SECRET}
         PUBLIC_AUTH_HTTP: http://localhost:3001
         DIRECTUS_URL: http://directus:8055
+        USERS_URI: service-users:3002
     depends_on:
       - directus
     volumes:
@@ -18,7 +20,7 @@ services:
     command: sh -c "npm run dev"
 
   service-users:
-    container_name: go
+    container_name: template-service-users
     working_dir: /server
     build:
       context: ./service-users
@@ -50,14 +52,14 @@ services:
     command: sh -c "go run /server/."
 
   redis:
-    container_name: powerit-redis
+    container_name: template-redis
     image: redis:alpine
     ports:
       - "6379:6379"
     command: redis-server --requirepass 12345
 
   directus:
-    container_name: directus
+    container_name: template-directus
     build:
       context: ./directus
     ports:

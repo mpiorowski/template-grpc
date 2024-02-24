@@ -5,10 +5,6 @@
     /** @type {string} */
     export let email;
     /** @type {string} */
-    export let first_name;
-    /** @type {string} */
-    export let last_name;
-    /** @type {string} */
     export let avatar;
 
     /** @type {boolean} */
@@ -112,7 +108,7 @@
                 class="ml-4 text-sm font-semibold leading-6"
                 aria-hidden="true"
             >
-                {first_name} {last_name}
+                Account
             </span>
             <svg
                 class="ml-2 h-5 w-5 text-gray-400"

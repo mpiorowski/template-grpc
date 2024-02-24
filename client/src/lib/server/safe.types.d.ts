@@ -6,6 +6,10 @@ export type Safe<T> =
     | {
           success: false;
           error: string;
+          fields?: {
+              field: string;
+              tag: string;
+          }[];
       };
 
 export declare function safe<T>(promise: Promise<T>): Promise<Safe<T>>;

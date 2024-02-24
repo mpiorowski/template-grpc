@@ -28,7 +28,7 @@ func main() {
 	// Set up the logger
 	w := os.Stderr
     var log slog.Level
-    if utils.ENV == "production" {
+    if utils.LOG_LEVEL == "info" {
         log = slog.LevelInfo
     } else {
         log = slog.LevelDebug
@@ -40,8 +40,6 @@ func main() {
 			TimeFormat: time.Kitchen,
 		}),
 	))
-
-	slog.Error("Error message", "key", "value")
 
 	// Connect to the database
 	err := db.Connect()
@@ -66,7 +64,7 @@ func main() {
 		panic(err)
 	}
 	var s *grpc.Server
-	if utils.ENV == "production" {
+	if utils.TLS == "true" {
 		certificate, err := tls.LoadX509KeyPair(utils.CERT_PATH, utils.KEY_PATH)
 		if err != nil {
 			slog.Error("Error loading TLS certificate", "tls.LoadX509KeyPair", err)
@@ -106,7 +104,7 @@ func main() {
 	})
 	go func() {
 		slog.Info("HTTP server listening on", "port", utils.HTTP_PORT)
-		if utils.ENV == "production" {
+		if utils.TLS == "true" {
 			err = e.StartTLS(":"+utils.HTTP_PORT, utils.CERT_PATH, utils.KEY_PATH)
 		} else {
 			err = e.Start(":" + utils.HTTP_PORT)

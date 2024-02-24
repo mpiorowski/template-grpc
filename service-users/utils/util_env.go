@@ -14,7 +14,7 @@ func mustHaveEnv(key string) string {
 }
 
 var (
-	ENV                  = mustHaveEnv("ENV")
+    LOG_LEVEL            = mustHaveEnv("LOG_LEVEL")
 	HTTP_PORT            = mustHaveEnv("HTTP_PORT")
 	GRPC_PORT            = mustHaveEnv("GRPC_PORT")
 	COOKIE_DOMAIN        = mustHaveEnv("COOKIE_DOMAIN")
@@ -22,6 +22,7 @@ var (
 	SERVER_HTTP          = mustHaveEnv("SERVER_HTTP")
 	REDIS_URL            = mustHaveEnv("REDIS_URL")
 	REDIS_PASSWORD       = mustHaveEnv("REDIS_PASSWORD")
+    TLS                  = mustHaveEnv("TLS")
 	CERT_PATH            = mustHaveEnv("CERT_PATH")
 	KEY_PATH             = mustHaveEnv("KEY_PATH")
 	JWT_SECRET           = mustHaveEnv("JWT_SECRET")

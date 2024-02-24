@@ -1,18 +1,11 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+import type { User__Output } from "$lib/proto/proto/User";
 declare global {
     namespace App {
         // interface Error {}
         interface Locals {
-            user: {
-                id: string;
-                email: string;
-                avatar: string;
-                subscription_id: string;
-                subscription_end: string;
-                subscription_check: string;
-                subscription_active: boolean;
-            };
+            user: User;
             token: string;
         }
         // interface PageData {}
