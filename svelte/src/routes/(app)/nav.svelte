@@ -13,7 +13,7 @@
     <div class="flex h-16 shrink-0 items-center">
         <a
             on:click={close}
-            href="/dashboard"
+            href="/"
             class="text-2xl font-bold text-indigo-600"
         >
             Template
