@@ -60,7 +60,7 @@ export function getValue(form, key) {
  */
 export function getAllValues(form, key) {
     const values = form.getAll(key);
-    let result = [];
+    const result = [];
     for (const value of values) {
         if (typeof value === "string") {
             result.push(value);
