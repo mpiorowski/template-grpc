@@ -11,11 +11,10 @@ import (
 	"github.com/stripe/stripe-go/v76/customer"
 	"github.com/stripe/stripe-go/v76/subscription"
 
-	pb "powerit/proto"
 	"powerit/utils"
 )
 
-func checkIfSubscribed(user *pb.User) bool {
+func checkIfSubscribed(user *User) bool {
 	if user.SubscriptionId == "" {
 		return false
 	}
@@ -73,7 +72,7 @@ func createStripeUser(userId string, email string) (string, error) {
 	return customer.ID, nil
 }
 
-func CreateStripeCheckout(user *pb.User) (string, error) {
+func CreateStripeCheckout(user *User) (string, error) {
 	customerId := user.SubscriptionId
 	if customerId == "" {
 		var err error
@@ -113,7 +112,7 @@ func CreateStripeCheckout(user *pb.User) (string, error) {
 	return session.URL, nil
 }
 
-func CreateStripePortal(user *pb.User) (string, error) {
+func CreateStripePortal(user *User) (string, error) {
 	stripe.Key = utils.STRIPE_API_KEY
 
 	params := &stripe.BillingPortalSessionParams{

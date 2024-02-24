@@ -3,15 +3,17 @@ package users
 import (
 	"context"
 	"fmt"
-	pb "powerit/proto"
+	"log/slog"
+	"net/http"
 	"powerit/utils"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"github.com/redis/go-redis/v9"
-	"google.golang.org/grpc/metadata"
+	"golang.org/x/oauth2"
 )
 
 /**
@@ -23,10 +25,11 @@ import (
  * 6. Get user from database
  * 7. Return user and new phantom token
  */
-func UserAuth(ctx context.Context) (*pb.User, string, error) {
-	claims, err := extractToken(ctx)
+func Auth(c echo.Context) error {
+	claims, err := extractToken(c)
 	if err != nil {
-		return nil, "", fmt.Errorf("extractToken: %w", err)
+		slog.Error("Error extracting token", "extractToken", err)
+		return c.JSON(401, "Unauthorized")
 	}
 	// get oauth token from redis
 	rdb := redis.NewClient(&redis.Options{
@@ -35,74 +38,150 @@ func UserAuth(ctx context.Context) (*pb.User, string, error) {
 	})
 	userId, err := rdb.Get(context.Background(), claims.Id).Result()
 	if err != nil {
-		return nil, "", fmt.Errorf("rdb.Get: %w", err)
+		slog.Error("Error getting user id from redis", "rdb.Get", err)
+		return c.JSON(401, "Unauthorized")
 	}
 	// get user from database
 	user, err := selectUserById(userId)
 	if err != nil {
-		return nil, "", fmt.Errorf("selectUserById: %w", err)
+		slog.Error("Error getting user from database", "selectUserById", err)
+		return c.JSON(500, "Error getting user from database")
 	}
 	// create new phantom token with a 7 day expiration
 	tokenId, err := uuid.NewV7()
 	if err != nil {
-		return nil, "", fmt.Errorf("uuid.NewV7: %w", err)
+		slog.Error("Error creating new token id", "uuid.NewV7", err)
+		return c.JSON(500, "Error creating new token id")
 	}
 	err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
 	if err != nil {
-		return nil, "", fmt.Errorf("rdb.Set: %w", err)
+		slog.Error("Error setting new token id in redis", "rdb.Set", err)
+		return c.JSON(500, "Error setting new token id in redis")
 	}
 	subscribed := checkIfSubscribed(user)
 	user.SubscriptionActive = subscribed
-	return user, tokenId.String(), nil
+	return c.JSON(200, map[string]interface{}{
+		"user":  user,
+		"token": tokenId.String(),
+	})
 }
 
-func GetAdminUsers(stream pb.UsersService_GetAdminUsersServer) error {
-	userChan := make(chan *pb.User)
-	errChan := make(chan error, 1)
-	go selectAllUsers(userChan, errChan)
+/**
+ *  Oauth login
+ *  @api {get} /oauth-login/:provider Oauth login
+ */
+func OauthLogin(c echo.Context) error {
+	config, err := OAuthConfig.getOAuthConfig(c.Param("provider"))
+	if err != nil {
+		slog.Error("Error getting provider", "configProvider.getOAuthConfig", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
 
-	// Stream users to client
-	for user := range userChan {
-		err := stream.Send(user)
+	// generate random state and verifier
+	state := utils.GenerateRandomState(32)
+	verifier := oauth2.GenerateVerifier()
+	// store state and verifier
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     utils.REDIS_URL,
+		Password: utils.REDIS_PASSWORD,
+	})
+	err = rdb.Set(context.Background(), state, verifier, 5*time.Minute).Err()
+	if err != nil {
+		slog.Error("Error setting state and verifier", "rdb.Set", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
+	// Redirect user to consent page to ask for permission
+	url := config.AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
+	return c.Redirect(http.StatusTemporaryRedirect, url)
+}
+
+/**
+ *  Oauth callback
+ *  @api {get} /oauth-callback/:provider Oauth callback
+ */
+func OauthCallback(c echo.Context) error {
+	provider := c.Param("provider")
+	code := c.QueryParam("code")
+	state := c.QueryParam("state")
+
+	// get verifier from state
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     utils.REDIS_URL,
+		Password: utils.REDIS_PASSWORD,
+	})
+	verifier, err := rdb.Get(context.Background(), state).Result()
+	if err != nil {
+		slog.Error("Error getting verifier", "rdb.Get", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
+
+	// get oauth config
+	config, err := OAuthConfig.getOAuthConfig(provider)
+	if err != nil {
+		slog.Error("Error getting provider", "configProvider.getOAuthConfig", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
+
+	// get oauth token
+	oauthToken, err := config.Exchange(context.Background(), code, oauth2.VerifierOption(verifier))
+	if err != nil {
+		slog.Error("Error exchanging code for token", "config.Exchange", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
+
+	// fetch user info from github
+	userInfo, err := OAuthConfig.getUserInfo(provider, oauthToken.AccessToken)
+	if err != nil {
+		slog.Error("Error fetching user info", "configProvider.getUserInfo", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
+
+	// get user, create if not exists
+	user, err := selectUserByEmailAndSub(userInfo.email, userInfo.sub)
+	if err != nil {
+		user, err = insertUser(userInfo.email, userInfo.sub, userInfo.avatar)
 		if err != nil {
-			return fmt.Errorf("stream.Send: %w", err)
+			slog.Error("Error inserting user", "insertUser", err)
+			return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=invalid_user")
 		}
 	}
 
-	// Check for errors
-	err := <-errChan
+	// create oauth token with a 7 day expiration
+	tokenId, err := uuid.NewV7()
 	if err != nil {
-		return fmt.Errorf("errChan: %w", err)
+		slog.Error("Error creating token id", "uuid.NewV7", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
 	}
-	return nil
-}
+	err = rdb.Set(context.Background(), tokenId.String(), user.Id, 7*24*time.Hour).Err()
+	if err != nil {
+		slog.Error("Error setting token id", "rdb.Set", err)
+		return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL+"/auth?error=unauthorized")
+	}
 
-func GetUser(ctx context.Context) (*pb.User, error) {
-	claims, err := extractToken(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("extractToken: %w", err)
-	}
-	user, err := selectUserById(claims.Id)
-	if err != nil {
-		return nil, fmt.Errorf("selectUserById: %w", err)
-	}
-	subscribed := checkIfSubscribed(user)
-	user.SubscriptionActive = subscribed
-	return user, nil
+	// set cookie
+	cookie := &http.Cookie{}
+	cookie.Domain = utils.COOKIE_DOMAIN
+	cookie.Name = "token"
+	cookie.Value = tokenId.String()
+	cookie.Path = "/"
+	cookie.Secure = true
+	cookie.SameSite = http.SameSiteLaxMode
+	cookie.HttpOnly = true
+	// 7 days
+	cookie.MaxAge = 7 * 24 * 60 * 60
+	c.SetCookie(cookie)
+
+	// redirect to home page
+	return c.Redirect(http.StatusTemporaryRedirect, utils.CLIENT_URL)
 }
 
 type Claims struct {
 	Id string
 }
 
-func extractToken(ctx context.Context) (Claims, error) {
+func extractToken(c echo.Context) (Claims, error) {
 	claims := Claims{}
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return claims, fmt.Errorf("Missing context metadata")
-	}
-
-	token := md.Get("x-authorization")
+	token := c.Request().Header["Authorization"]
 	if len(token) == 0 {
 		return claims, fmt.Errorf("Missing authorization header")
 	}

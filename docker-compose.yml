@@ -3,6 +3,11 @@ services:
     container_name: svelte
     build:
       context: ./svelte
+      target: dev
+      args:
+        TARGET: development
+        PUBLIC_AUTH_HTTP: http://localhost:3001
+        DIRECTUS_URL: http://directus:8055
     depends_on:
       - directus
     volumes:
@@ -10,15 +15,16 @@ services:
       - ./svelte/.svelte-kit:/client/.svelte-kit
     ports:
       - 3000:3000
+    command: sh -c "npm run dev"
 
   go:
     container_name: go
     working_dir: /server
     build:
-      context: ./service-users
+      context: ./go
       target: dev
     volumes:
-      - ./service-users:/server
+      - ./go:/server
     ports:
       - 3001:3001
       - 3002:3002
@@ -31,7 +37,7 @@ services:
       SERVER_HTTP: http://localhost:3001
       REDIS_URL: redis:6379
       REDIS_PASSWORD: 12345
-      TLS: "true"
+      TLS: "false"
       CERT_PATH: /etc/letsencrypt/live/example.com/fullchain.pem
       KEY_PATH: /etc/letsencrypt/live/example.com/privkey.pem
       JWT_SECRET: ${JWT_SECRET}
@@ -42,6 +48,13 @@ services:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
     command: sh -c "go run /server/."
+
+  redis:
+    container_name: powerit-redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass 12345
 
   directus:
     container_name: directus
@@ -54,6 +67,7 @@ services:
       - ./directus/uploads:/directus/uploads
       - ./directus/extensions:/directus/extensions
     environment:
+      PUBLIC_URL: http://0.0.0.0:8055
       KEY: jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi
       SECRET: sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje
       ADMIN_EMAIL: admin@gmail.com
@@ -65,7 +79,6 @@ services:
       EMAIL_FROM: email@upsend.app
       EMAIL_SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       WEBSOCKETS_ENABLED: true
-      PUBLIC_URL: http://0.0.0.0:8055
       # CACHE_ENABLED: "true"
       # CACHE_STORE: "redis"
       # REDIS: "redis://cache:6379"
