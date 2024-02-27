@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for template-client on 2024-02-27T23:51:32+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'template-client'
+primary_region = 'arn'
+
+[build.args]
+  TARGET = 'development'
+  JWT_SECRET = '${JWT_SECRET}'
+  PUBLIC_AUTH_URL = 'http://localhost:3001'
+  DIRECTUS_URL = 'http://directus:8055'
+  USERS_URI = 'service-users:3002'
+    
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

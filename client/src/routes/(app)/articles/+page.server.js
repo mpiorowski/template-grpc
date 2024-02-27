@@ -1,7 +1,7 @@
 import { getAllArticles } from "$lib/server/services/articles_service";
 import { error } from "@sveltejs/kit";
 
-export const prerender = true;
+// export const prerender = true;
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
