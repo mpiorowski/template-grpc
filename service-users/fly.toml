@@ -10,21 +10,19 @@ primary_region = 'arn'
   LOG_LEVEL = 'info'
   HTTP_PORT = 3001
   GRPC_PORT = 3002
-  COOKIE_DOMAIN = 'localhost'
+  COOKIE_DOMAIN = 'template-client.fly.dev'
   CLIENT_URL = 'https://template-client.fly.dev'
   SERVER_HTTP = 'https://service-users.fly.dev'
-  REDIS_URL = 'redis://default:0bcf7cffff454f00a751247593d9d994@fly-rusve-redis.upstash.io:6379'
-  REDIS_PASSWORD = 12345
+  REDIS_URL = 'fly-rusve-redis.upstash.io:6379'
+  REDIS_PASSWORD = '0bcf7cffff454f00a751247593d9d994'
   TLS = 'false'
   CERT_PATH = '/etc/letsencrypt/live/example.com/fullchain.pem'
   KEY_PATH = '/etc/letsencrypt/live/example.com/privkey.pem'
-  JWT_SECRET = '${JWT_SECRET}'
-  STRIPE_API_KEY = '${STRIPE_API_KEY}'
+  JWT_SECRET = 'JWT_SECRET'
+  STRIPE_API_KEY = 'STRIPE_API_KEY'
   STRIPE_PRICE_ID = 'price_1OmhP6HRNcZGXxTidRkfuTFr'
-  GOOGLE_CLIENT_ID = '${GOOGLE_CLIENT_ID}'
-  GOOGLE_CLIENT_SECRET = '${GOOGLE_CLIENT_SECRET}'
-  GITHUB_CLIENT_ID = '${GITHUB_CLIENT_ID}'
-  GITHUB_CLIENT_SECRET = '${GITHUB_CLIENT_SECRET}'
+  GITHUB_CLIENT_ID = 'GITHUB_CLIENT_ID'
+  GITHUB_CLIENT_SECRET = 'GITHUB_CLIENT_SECRET'
 
 [build]
 

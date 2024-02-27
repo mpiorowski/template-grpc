@@ -40,8 +40,7 @@ export async function handle({ event, resolve }) {
     if (token) {
         event.cookies.set("token", token, {
             path: "/",
-            maxAge: 10,
-            domain: "localhost",
+            maxAge: 10
         });
         throw redirect(302, "/articles");
     }
@@ -75,7 +74,7 @@ export async function handle({ event, resolve }) {
     // max age is 30 days
     response.headers.append(
         "set-cookie",
-        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/; Domain=localhost;`
+        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/;`
     );
     return response;
 }

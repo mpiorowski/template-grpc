@@ -11,7 +11,7 @@ primary_region = 'arn'
   JWT_SECRET = 'JWT_SECRET'
   DIRECTUS_URL = 'http://directus:8055'
   PUBLIC_AUTH_URL = 'https://service-users.fly.dev'
-  USERS_URI = 'https://service-users.fly.dev:3002'
+  USERS_URI = 'service-users.fly.dev:3002'
 
 [http_service]
   internal_port = 3000

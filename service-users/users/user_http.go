@@ -30,6 +30,7 @@ func OauthLogin(c echo.Context) error {
 	// store state and verifier
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     system.REDIS_URL,
+        Password: system.REDIS_PASSWORD,
 	})
 	err = rdb.Set(context.Background(), state, verifier, 5*time.Minute).Err()
     if err != nil {
@@ -53,6 +54,7 @@ func OauthCallback(c echo.Context) error {
 	// get verifier from state
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     system.REDIS_URL,
+        Password: system.REDIS_PASSWORD,
 	})
 	verifier, err := rdb.Get(context.Background(), state).Result()
 	if err != nil {
@@ -104,18 +106,18 @@ func OauthCallback(c echo.Context) error {
     }
 
 	// set cookie
-	cookie := &http.Cookie{}
-	cookie.Domain = system.COOKIE_DOMAIN
-	cookie.Name = "token"
-	cookie.Value = tokenId.String()
-	cookie.Path = "/"
-	cookie.Secure = true
-	cookie.SameSite = http.SameSiteLaxMode
-	cookie.HttpOnly = true
-	// 7 days
-	cookie.MaxAge = 7 * 24 * 60 * 60
-	c.SetCookie(cookie)
+	// cookie := &http.Cookie{}
+	// cookie.Domain = system.COOKIE_DOMAIN
+	// cookie.Name = "token"
+	// cookie.Value = tokenId.String()
+	// cookie.Path = "/"
+	// cookie.Secure = true
+	// cookie.SameSite = http.SameSiteLaxMode
+	// cookie.HttpOnly = true
+	// // 7 days
+	// cookie.MaxAge = 7 * 24 * 60 * 60
+	// c.SetCookie(cookie)
 
 	// redirect to home page
-	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL)
+	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/?token="+tokenId.String())
 }
