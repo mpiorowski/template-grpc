@@ -30,7 +30,6 @@ func OauthLogin(c echo.Context) error {
 	// store state and verifier
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
 	})
 	err = rdb.Set(context.Background(), state, verifier, 5*time.Minute).Err()
     if err != nil {
@@ -54,7 +53,6 @@ func OauthCallback(c echo.Context) error {
 	// get verifier from state
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
 	})
 	verifier, err := rdb.Get(context.Background(), state).Result()
 	if err != nil {

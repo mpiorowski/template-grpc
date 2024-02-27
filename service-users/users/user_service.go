@@ -32,7 +32,6 @@ func Auth(ctx context.Context) (*pb.User, string, error) {
 	// get oauth token from redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
 	})
 	userId, err := rdb.Get(context.Background(), claims.Id).Result()
 	if err != nil {

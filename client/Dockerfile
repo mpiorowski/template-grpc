@@ -27,6 +27,8 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
+RUN npm install
+COPY . .
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
@@ -39,9 +41,6 @@ RUN echo "DIRECTUS_URL=${DIRECTUS_URL}" >> .env
 ARG USERS_URI
 RUN echo "USERS_URI=${USERS_URI}" >> .env
 
-RUN npm install
-COPY . .
-
 RUN npm run build
 
 # Production
@@ -50,9 +49,10 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY --from=build /client/build /client/build
+COPY --from=build /client/src/lib/proto/ /client/src/lib/proto/
 
 CMD PORT=3000 node build
 

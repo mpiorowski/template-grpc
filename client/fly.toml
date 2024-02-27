@@ -7,12 +7,11 @@ app = 'template-client'
 primary_region = 'arn'
 
 [build.args]
-  TARGET = 'development'
-  JWT_SECRET = '${JWT_SECRET}'
-  PUBLIC_AUTH_URL = 'http://localhost:3001'
+  TARGET = 'production'
+  JWT_SECRET = 'JWT_SECRET'
   DIRECTUS_URL = 'http://directus:8055'
-  USERS_URI = 'service-users:3002'
-    
+  PUBLIC_AUTH_URL = 'https://service-users.fly.dev'
+  USERS_URI = 'https://service-users.fly.dev:3002'
 
 [http_service]
   internal_port = 3000
