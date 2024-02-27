@@ -25,32 +25,6 @@ func dest(user *pb.User) []interface{} {
     }
 }
 
-func selectAllUsers(userChan chan<- *pb.User, errChan chan<- error) {
-	defer close(userChan)
-	rows, err := system.Db.Query("select * from users")
-	if err != nil {
-		errChan <- fmt.Errorf("db.Query: %w", err)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-        var user pb.User
-		err := rows.Scan(dest(&user)...)
-		if err != nil {
-			errChan <- fmt.Errorf("scanUser: %w", err)
-			return
-		}
-		userChan <- &user
-	}
-	err = rows.Err()
-	if err != nil {
-		errChan <- fmt.Errorf("rows.Err: %w", err)
-		return
-	}
-	errChan <- nil
-}
-
 func selectUserById(id string) (*pb.User, error) {
 	row := system.Db.QueryRow("update users set updated = current_timestamp where id = $1 returning *", id)
     var user pb.User
