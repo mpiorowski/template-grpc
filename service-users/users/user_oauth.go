@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"powerit/utils"
+	"powerit/system"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -17,21 +17,21 @@ type UserInfo struct {
 }
 
 var githubOAuthConfig = oauth2.Config{
-	ClientID:     utils.GITHUB_CLIENT_ID,
-	ClientSecret: utils.GITHUB_CLIENT_SECRET,
+	ClientID:     system.GITHUB_CLIENT_ID,
+	ClientSecret: system.GITHUB_CLIENT_SECRET,
 	Endpoint: oauth2.Endpoint{
 		AuthURL:  "https://github.com/login/oauth/authorize",
 		TokenURL: "https://github.com/login/oauth/access_token",
 	},
-	RedirectURL: utils.SERVER_HTTP + "/oauth-callback/github",
+	RedirectURL: system.SERVER_HTTP + "/oauth-callback/github",
 	Scopes:      []string{"user:email"},
 }
 
 var googleOAuthConfig = oauth2.Config{
-	ClientID:     utils.GOOGLE_CLIENT_ID,
-	ClientSecret: utils.GOOGLE_CLIENT_SECRET,
+	ClientID:     system.GOOGLE_CLIENT_ID,
+	ClientSecret: system.GOOGLE_CLIENT_SECRET,
 	Endpoint:     google.Endpoint,
-	RedirectURL:  utils.SERVER_HTTP + "/oauth-callback/google",
+	RedirectURL:  system.SERVER_HTTP + "/oauth-callback/google",
 	Scopes:       []string{"profile", "email", "openid"},
 }
 

@@ -12,7 +12,7 @@ import (
 	"github.com/stripe/stripe-go/v76/subscription"
 
 	pb "powerit/proto"
-	"powerit/utils"
+	"powerit/system"
 )
 
 func checkIfSubscribed(user *pb.User) bool {
@@ -28,7 +28,7 @@ func checkIfSubscribed(user *pb.User) bool {
 		return false
 	}
 
-	stripe.Key = utils.STRIPE_API_KEY
+	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.SubscriptionListParams{
 		Customer: stripe.String(user.SubscriptionId),
@@ -57,7 +57,7 @@ func checkIfSubscribed(user *pb.User) bool {
 }
 
 func createStripeUser(userId string, email string) (string, error) {
-	stripe.Key = utils.STRIPE_API_KEY
+	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.CustomerParams{
 		Email: stripe.String(email),
@@ -83,18 +83,18 @@ func CreateStripeCheckout(user *pb.User) (string, error) {
 		}
 	}
 
-	stripe.Key = utils.STRIPE_API_KEY
+	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.CheckoutSessionParams{
-		SuccessURL: stripe.String(utils.CLIENT_URL + "/billing?success"),
-		CancelURL:  stripe.String(utils.CLIENT_URL + "/billing?cancel"),
+		SuccessURL: stripe.String(system.CLIENT_URL + "/billing?success"),
+		CancelURL:  stripe.String(system.CLIENT_URL + "/billing?cancel"),
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
 		Mode: stripe.String("subscription"),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{
-				Price:    stripe.String(utils.STRIPE_PRICE_ID),
+				Price:    stripe.String(system.STRIPE_PRICE_ID),
 				Quantity: stripe.Int64(1),
 			},
 		},
@@ -114,11 +114,11 @@ func CreateStripeCheckout(user *pb.User) (string, error) {
 }
 
 func CreateStripePortal(user *pb.User) (string, error) {
-	stripe.Key = utils.STRIPE_API_KEY
+	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.BillingPortalSessionParams{
 		Customer:  stripe.String(user.SubscriptionId),
-		ReturnURL: stripe.String(utils.CLIENT_URL + "/billing"),
+		ReturnURL: stripe.String(system.CLIENT_URL + "/billing"),
 	}
 	session, err := portal_session.New(params)
 	if err != nil {

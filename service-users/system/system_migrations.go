@@ -1,4 +1,4 @@
-package db
+package system
 
 func Migrations() error {
 	var err error

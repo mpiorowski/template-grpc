@@ -3,8 +3,9 @@ package users
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	pb "powerit/proto"
-	"powerit/utils"
+	"powerit/system"
 	"strings"
 	"time"
 
@@ -30,8 +31,8 @@ func Auth(ctx context.Context) (*pb.User, string, error) {
 	}
 	// get oauth token from redis
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     utils.REDIS_URL,
-		Password: utils.REDIS_PASSWORD,
+		Addr:     system.REDIS_URL,
+		Password: system.REDIS_PASSWORD,
 	})
 	userId, err := rdb.Get(context.Background(), claims.Id).Result()
 	if err != nil {
@@ -47,10 +48,12 @@ func Auth(ctx context.Context) (*pb.User, string, error) {
 	if err != nil {
 		return nil, "", fmt.Errorf("uuid.NewV7: %w", err)
 	}
-	err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
-	if err != nil {
-		return nil, "", fmt.Errorf("rdb.Set: %w", err)
-	}
+	go func() {
+		err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
+		if err != nil {
+			slog.Error("Error setting token in redis", "rdb.Set", err)
+		}
+	}()
 	subscribed := checkIfSubscribed(user)
 	user.SubscriptionActive = subscribed
 	return user, tokenId.String(), nil
@@ -96,7 +99,7 @@ func extractToken(ctx context.Context) (Claims, error) {
 	tokenString := tokenParts[1]
 	jwtClaims := jwt.MapClaims{}
 	t, err := jwt.ParseWithClaims(tokenString, jwtClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(utils.JWT_SECRET), nil
+		return []byte(system.JWT_SECRET), nil
 	})
 	if err != nil {
 		return claims, fmt.Errorf("jwt.ParseWithClaims: %w", err)

@@ -2,7 +2,7 @@ package users
 
 import (
 	"fmt"
-	"powerit/db"
+	"powerit/system"
 
 	pb "powerit/proto"
 
@@ -27,7 +27,7 @@ func dest(user *pb.User) []interface{} {
 
 func selectAllUsers(userChan chan<- *pb.User, errChan chan<- error) {
 	defer close(userChan)
-	rows, err := db.Db.Query("select * from users")
+	rows, err := system.Db.Query("select * from users")
 	if err != nil {
 		errChan <- fmt.Errorf("db.Query: %w", err)
 		return
@@ -52,7 +52,7 @@ func selectAllUsers(userChan chan<- *pb.User, errChan chan<- error) {
 }
 
 func selectUserById(id string) (*pb.User, error) {
-	row := db.Db.QueryRow("update users set updated = current_timestamp where id = $1 returning *", id)
+	row := system.Db.QueryRow("update users set updated = current_timestamp where id = $1 returning *", id)
     var user pb.User
     err := row.Scan(dest(&user)...)
 	if err != nil {
@@ -63,7 +63,7 @@ func selectUserById(id string) (*pb.User, error) {
 }
 
 func selectUserByEmailAndSub(email string, sub string) (*pb.User, error) {
-	row := db.Db.QueryRow("select * from users where email = $1 and sub = $2", email, sub)
+	row := system.Db.QueryRow("select * from users where email = $1 and sub = $2", email, sub)
     var user pb.User
     err := row.Scan(dest(&user)...)
 	if err != nil {
@@ -78,7 +78,7 @@ func insertUser(email string, sub string, avatar string) (*pb.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("uuid.NewRandom: %w", err)
 	}
-	row := db.Db.QueryRow("insert into users (id, email, sub, role, avatar) values ($1, $2, $3, $4, $5) returning *",
+	row := system.Db.QueryRow("insert into users (id, email, sub, role, avatar) values ($1, $2, $3, $4, $5) returning *",
 		id, email, sub, pb.UserRole_ROLE_USER, avatar)
     var user pb.User
     err = row.Scan(dest(&user)...)
@@ -90,7 +90,7 @@ func insertUser(email string, sub string, avatar string) (*pb.User, error) {
 }
 
 func updateSubscriptionId(userId string, subscriptionId string) error {
-	_, err := db.Db.Exec("update users set subscription_id = $1 where id = $2", subscriptionId, userId)
+	_, err := system.Db.Exec("update users set subscription_id = $1 where id = $2", subscriptionId, userId)
 	if err != nil {
 		return fmt.Errorf("db.Exec: %w", err)
 	}
@@ -98,7 +98,7 @@ func updateSubscriptionId(userId string, subscriptionId string) error {
 }
 
 func updateSubscriptionCheck(userId string, subscriptionCheck string) error {
-	_, err := db.Db.Exec("update users set subscription_check = $1 where id = $2", subscriptionCheck, userId)
+	_, err := system.Db.Exec("update users set subscription_check = $1 where id = $2", subscriptionCheck, userId)
 	if err != nil {
 		return fmt.Errorf("db.Exec: %w", err)
 	}
@@ -106,7 +106,7 @@ func updateSubscriptionCheck(userId string, subscriptionCheck string) error {
 }
 
 func updateSubscriptionEnd(userId string, subscriptionEnd string) error {
-	_, err := db.Db.Exec("update users set subscription_end = $1 where id = $2", subscriptionEnd, userId)
+	_, err := system.Db.Exec("update users set subscription_end = $1 where id = $2", subscriptionEnd, userId)
 	if err != nil {
 		return fmt.Errorf("db.Exec: %w", err)
 	}

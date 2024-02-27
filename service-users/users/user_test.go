@@ -1,7 +1,7 @@
 package users
 
 import (
-	"powerit/db"
+	"powerit/system"
 	pb "powerit/proto"
 	"testing"
 )
@@ -22,13 +22,13 @@ var users = []*pb.User{
 }
 
 func TestMain(m *testing.M) {
-	_ = db.ConnectTest()
-	_ = db.Migrations()
+	_ = system.ConnectTest()
+	_ = system.Migrations()
 	m.Run()
 }
 
 func clearUsers() {
-    _, _ = db.Db.Exec("delete from users")
+    _, _ = system.Db.Exec("delete from users")
 }
 
 func TestInsertUsers(t *testing.T) {
