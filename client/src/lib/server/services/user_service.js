@@ -64,7 +64,7 @@ export async function getAllUsers() {
         logger.error(r.error, "Error getting all users");
         return { success: false, error: "Error getting users" };
     }
-    let users = r.data.data.sort((a, b) => {
+    const users = r.data.data.sort((a, b) => {
         // date_updated is a string, so we need to convert it to a number
         return (
             new Date(b.date_updated).getTime() -

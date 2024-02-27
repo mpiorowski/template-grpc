@@ -14,7 +14,8 @@
                 alt={article.title}
                 class="w-1/2"
             />
-            <div>{@html article.content}</div>
+            // eslint-disable-next-line svelte/no-at-html-tags
+            <div>{article.content}</div>
         </li>
     {/each}
 </ul>

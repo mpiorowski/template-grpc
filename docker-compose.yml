@@ -7,7 +7,7 @@ services:
       args:
         TARGET: development
         JWT_SECRET: ${JWT_SECRET}
-        PUBLIC_AUTH_HTTP: http://localhost:3001
+        PUBLIC_AUTH_URL: http://localhost:3001
         DIRECTUS_URL: http://directus:8055
         USERS_URI: service-users:3002
     depends_on:

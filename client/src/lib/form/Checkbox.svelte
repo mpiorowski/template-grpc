@@ -18,15 +18,15 @@
     $: updateChekbox(group);
     $: updateGroup(checked);
 
-    /** @param {string[]} group */
-    function updateChekbox(group) {
-        checked = group.indexOf(value) >= 0;
+    /** @param {string[]} g */
+    function updateChekbox(g) {
+        checked = g.indexOf(value) >= 0;
     }
 
-    /** @param {boolean} checked */
-    function updateGroup(checked) {
+    /** @param {boolean} c */
+    function updateGroup(c) {
         const index = group.indexOf(value);
-        if (checked) {
+        if (c) {
             if (index < 0) {
                 group.push(value);
                 group = group;

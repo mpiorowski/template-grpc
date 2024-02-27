@@ -22,7 +22,7 @@ import { logger, perf } from "$lib/server/logger";
 export async function sendContact(form) {
     const end = perf("send_contact");
     /** @type {Omit<Contact, "id">} */
-    let data = {
+    const data = {
         first_name: getValue(form, "first_name"),
         last_name: getValue(form, "last_name"),
         email: getValue(form, "email"),
