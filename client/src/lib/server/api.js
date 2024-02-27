@@ -29,6 +29,11 @@ export default async function api(
         return { success: false, error: res.error };
     }
 
+    // check if error response
+    if (!res.data.ok) {
+        return { success: false, error: res.data.statusText };
+    }
+
     // check if empty response
     if (res.data.status === 204) {
         const empty = /** @type {T} */ ({});
