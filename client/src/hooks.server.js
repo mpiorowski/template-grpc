@@ -44,7 +44,7 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 10,
         });
-        throw redirect(302, "/users");
+        throw redirect(302, "/articles");
     }
 
     token = event.cookies.get("token") ?? "";
@@ -68,7 +68,7 @@ export async function handle({ event, resolve }) {
     logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/users");
+        throw redirect(302, "/articles");
     }
 
     end();
