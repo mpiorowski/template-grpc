@@ -8,7 +8,6 @@ import { redirect } from "@sveltejs/kit";
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
     const end = perf("auth");
-    logger.info(event.url.pathname, "pathname");
     event.locals.user = {
         id: "",
         created: "",
@@ -29,12 +28,6 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 0,
         });
-        logger.info("Auth page");
-        return await resolve(event);
-    }
-
-    if (event.url.pathname === "/articles") {
-        logger.info("Articles page");
         return await resolve(event);
     }
 
@@ -51,15 +44,13 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 10,
         });
-        logger.info("Token page");
-        logger.info("Redirecting to /users");
-        throw redirect(307, "/users");
+        throw redirect(302, "/users");
     }
 
     token = event.cookies.get("token") ?? "";
     if (!token) {
         logger.info("No token");
-        throw redirect(307, "/auth");
+        throw redirect(302, "/auth");
     }
 
     const metadata = createMetadata(token);
@@ -69,7 +60,7 @@ export async function handle({ event, resolve }) {
     });
     if (!auth.success || !auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
-        throw redirect(307, "/auth");
+        throw redirect(302, "/auth");
     }
 
     event.locals.user = auth.data.user;
@@ -77,7 +68,7 @@ export async function handle({ event, resolve }) {
     logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(307, "/users");
+        throw redirect(302, "/users");
     }
 
     end();

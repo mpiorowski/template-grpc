@@ -19,7 +19,7 @@ RUN echo "USERS_URI=${USERS_URI}" >> .env
 
 RUN npm install
 
-COPY . .
+COPY . /client
 
 # Build
 FROM node:20-slim AS build
@@ -28,7 +28,6 @@ WORKDIR /client
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
 RUN npm install
-COPY . .
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
@@ -41,6 +40,7 @@ RUN echo "PUBLIC_DIRECTUS_URL=${PUBLIC_DIRECTUS_URL}" >> .env
 ARG USERS_URI
 RUN echo "USERS_URI=${USERS_URI}" >> .env
 
+COPY . /client
 RUN npm run build
 
 # Production
