@@ -53,13 +53,13 @@ export async function handle({ event, resolve }) {
         });
         logger.info("Token page");
         logger.info("Redirecting to /users");
-        throw redirect(302, "/users");
+        throw redirect(307, "/users");
     }
 
     token = event.cookies.get("token") ?? "";
     if (!token) {
         logger.info("No token");
-        throw redirect(302, "/auth");
+        throw redirect(307, "/auth");
     }
 
     const metadata = createMetadata(token);
@@ -69,7 +69,7 @@ export async function handle({ event, resolve }) {
     });
     if (!auth.success || !auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
-        throw redirect(302, "/auth");
+        throw redirect(307, "/auth");
     }
 
     event.locals.user = auth.data.user;
@@ -77,7 +77,7 @@ export async function handle({ event, resolve }) {
     logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/users");
+        throw redirect(307, "/users");
     }
 
     end();
