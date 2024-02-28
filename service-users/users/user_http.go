@@ -119,5 +119,5 @@ func OauthCallback(c echo.Context) error {
 	// c.SetCookie(cookie)
 
 	// redirect to home page
-	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/?token="+tokenId.String())
+	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/token/"+tokenId.String())
 }

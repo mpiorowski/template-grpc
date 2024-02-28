@@ -31,16 +31,22 @@ export async function handle({ event, resolve }) {
         return await resolve(event);
     }
 
+    if (event.url.pathname === "/articles") {
+        return await resolve(event);
+    }
+
     /**
      * Check if the user is coming from the oauth flow
      * If so, set a temporary cookie with the token
      * On the next request, the new token will be used
      */
-    let token = event.url.searchParams.get("token");
+    let token = event.url.pathname.includes("/token/")
+        ? event.url.pathname.split("/token/")[1]
+        : "";
     if (token) {
         event.cookies.set("token", token, {
             path: "/",
-            maxAge: 10
+            maxAge: 10,
         });
         throw redirect(302, "/articles");
     }
@@ -74,7 +80,7 @@ export async function handle({ event, resolve }) {
     // max age is 30 days
     response.headers.append(
         "set-cookie",
-        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/;`
+        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/;`,
     );
     return response;
 }

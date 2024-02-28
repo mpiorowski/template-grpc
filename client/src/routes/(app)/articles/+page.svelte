@@ -1,4 +1,5 @@
 <script>
+    import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
     /** @type {import("./$types").PageData} */
     export let data;
     const articles = data.articles;
@@ -10,11 +11,10 @@
         <li class="flex flex-col gap-4 rounded-xl border p-4">
             <h2>{article.title}</h2>
             <img
-                src="http://0.0.0.0:8055/assets/{article.image}"
+                src="{PUBLIC_DIRECTUS_URL}/assets/{article.image}"
                 alt={article.title}
                 class="w-1/2"
             />
-            // eslint-disable-next-line svelte/no-at-html-tags
             <div>{article.content}</div>
         </li>
     {/each}

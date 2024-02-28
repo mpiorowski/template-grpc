@@ -1,4 +1,4 @@
-import { DIRECTUS_URL } from "$env/static/private";
+import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
 import { getValue } from "$lib/helpers";
 import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
@@ -30,7 +30,7 @@ export async function sendContact(form) {
         message: getValue(form, "message"),
     };
     /** @type {import("../safe.types").Safe<{data: Contact}>} */
-    const r = await api(DIRECTUS_URL + "/items/contact", {
+    const r = await api(PUBLIC_DIRECTUS_URL + "/items/contact", {
         method: "POST",
         body: data,
     });

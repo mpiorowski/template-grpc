@@ -1,4 +1,4 @@
-import { DIRECTUS_URL } from "$env/static/private";
+import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
 import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 
@@ -19,7 +19,7 @@ import { logger, perf } from "$lib/server/logger";
 export async function getAllArticles() {
     const end = perf("get_all_articles");
     /** @type {import("../safe.types").Safe<{data: Article[]}>} */
-    const r = await api(DIRECTUS_URL + "/items/articles");
+    const r = await api(PUBLIC_DIRECTUS_URL + "/items/articles");
     if (!r.success) {
         logger.error(r.error, "Error getting all articles");
         return { success: false, error: r.error };

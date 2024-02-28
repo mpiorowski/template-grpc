@@ -9,7 +9,7 @@ primary_region = 'arn'
 [build.args]
   TARGET = 'production'
   JWT_SECRET = 'JWT_SECRET'
-  DIRECTUS_URL = 'http://directus:8055'
+  PUBLIC_DIRECTUS_URL = 'https://template-directus.fly.dev'
   PUBLIC_AUTH_URL = 'https://service-users.fly.dev'
   USERS_URI = 'service-users.fly.dev:3002'
 

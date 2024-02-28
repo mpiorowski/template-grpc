@@ -18,6 +18,10 @@ primary_region = 'arn'
 
 [build]
 
+[mounts]
+  source="uploads"
+  destination="/uploads"
+
 [http_service]
   internal_port = 8055
   force_https = true

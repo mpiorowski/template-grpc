@@ -1,4 +1,4 @@
-import { DIRECTUS_URL } from "$env/static/private";
+import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
 import { getAllValues, getFile, getValue } from "$lib/helpers";
 import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
@@ -59,7 +59,7 @@ export const emptyUser = {
 export async function getAllUsers() {
     const end = perf("get_all_users");
     /** @type {import("../safe.types").Safe<{data: User[]}>} */
-    const r = await api(DIRECTUS_URL + "/items/users");
+    const r = await api(PUBLIC_DIRECTUS_URL + "/items/users");
     if (!r.success) {
         logger.error(r.error, "Error getting all users");
         return { success: false, error: "Error getting users" };
@@ -85,7 +85,7 @@ export async function getAllUsers() {
 export async function getUserById(id) {
     const end = perf("get_user_by_id");
     /** @type {import("../safe.types").Safe<{data: User}>} */
-    const r = await api(DIRECTUS_URL + "/items/users/" + id);
+    const r = await api(PUBLIC_DIRECTUS_URL + "/items/users/" + id);
     if (!r.success) {
         logger.error(r.error, "Error getting user");
         return { success: false, error: "Error getting user" };
@@ -128,12 +128,12 @@ export async function createUser(form_data, id) {
     /** @type {import("../safe.types").Safe<{data: User}>} */
     let r;
     if (id !== "-1") {
-        r = await api(DIRECTUS_URL + "/items/users/" + id, {
+        r = await api(PUBLIC_DIRECTUS_URL + "/items/users/" + id, {
             method: "PATCH",
             body: user,
         });
     } else {
-        r = await api(DIRECTUS_URL + "/items/users", {
+        r = await api(PUBLIC_DIRECTUS_URL + "/items/users", {
             method: "POST",
             body: user,
         });
