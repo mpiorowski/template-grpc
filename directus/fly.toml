@@ -19,8 +19,8 @@ primary_region = 'arn'
 [build]
 
 [mounts]
+  destination="/directus/uploads"
   source="uploads"
-  destination="/uploads"
 
 [http_service]
   internal_port = 8055

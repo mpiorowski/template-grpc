@@ -22,35 +22,6 @@
     <nav class="flex flex-1 flex-col">
         <ul role="list" class="-mx-2 space-y-1">
             <li>
-                <a
-                    on:click={close}
-                    href="/articles"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
-                    {current === 'articles'
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'}"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-file"
-                    >
-                        <path
-                            d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
-                        ></path>
-                        <polyline points="13 2 13 9 20 9"></polyline>
-                    </svg>
-                    Articles
-                </a>
-            </li>
-            <li>
                 <!-- Current: "bg-gray-800 text-white", Default: "text-gray-400 hover:text-white hover:bg-gray-800" -->
 
                 <a
@@ -81,6 +52,35 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                     Users
+                </a>
+            </li>
+            <li>
+                <a
+                    on:click={close}
+                    href="/articles"
+                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
+                    {current === 'articles'
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'}"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-file"
+                    >
+                        <path
+                            d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
+                        ></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+                    Articles
                 </a>
             </li>
             <li>

@@ -8,6 +8,7 @@ import { redirect } from "@sveltejs/kit";
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
     const end = perf("auth");
+    logger.info(event.url.pathname, "pathname");
     event.locals.user = {
         id: "",
         created: "",
@@ -28,10 +29,12 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 0,
         });
+        logger.info("Auth page");
         return await resolve(event);
     }
 
     if (event.url.pathname === "/articles") {
+        logger.info("Articles page");
         return await resolve(event);
     }
 
@@ -48,7 +51,9 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 10,
         });
-        throw redirect(302, "/articles");
+        logger.info("Token page");
+        logger.info("Redirecting to /users");
+        throw redirect(302, "/users");
     }
 
     token = event.cookies.get("token") ?? "";
@@ -72,7 +77,7 @@ export async function handle({ event, resolve }) {
     logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/articles");
+        throw redirect(302, "/users");
     }
 
     end();

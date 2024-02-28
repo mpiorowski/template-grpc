@@ -93,13 +93,13 @@ func OauthCallback(c echo.Context) error {
 		}
 	}
 
-	// create oauth token with a 7 day expiration
+	// create oauth token with a 10 seconds expiration
 	tokenId, err := uuid.NewV7()
 	if err != nil {
 		slog.Error("Error creating token id", "uuid.NewV7", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
-	err = rdb.Set(context.Background(), tokenId.String(), user.Id, 7*24*time.Hour).Err()
+	err = rdb.Set(context.Background(), tokenId.String(), user.Id, 10*time.Second).Err()
     if err != nil {
         slog.Error("Error setting token id", "rdb.Set", err)
         return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
