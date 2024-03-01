@@ -21,7 +21,7 @@ export async function getAllArticles() {
     /** @type {import("../safe.types").Safe<{data: Article[]}>} */
     const r = await api(PUBLIC_DIRECTUS_URL + "/items/articles");
     if (!r.success) {
-        logger.error(r.error, "Error getting all articles");
+        logger.error(`Error getting all articles: ${r.error}`);
         return { success: false, error: r.error };
     }
     logger.debug(r, "get_all_articles");

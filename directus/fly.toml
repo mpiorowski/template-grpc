@@ -11,16 +11,12 @@ primary_region = 'arn'
   SECRET = "sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje"
   ADMIN_EMAIL = "admin@gmail.com"
   ADMIN_PASSWORD = "A1m2n"
-  DB_CLIENT = "pg"
-  # CACHE_ENABLED = "true"
-  # CACHE_TTL = "10m"
-  # CACHE_AUTO_PURGE = "true"
-
-[build]
+  DB_CLIENT = 'sqlite3'
+  DB_FILENAME = '/directus/database/data.db'
 
 [mounts]
-  destination="/directus/uploads"
-  source="uploads"
+  source = 'directus'
+  destination = '/directus'
 
 [http_service]
   internal_port = 8055
@@ -31,6 +27,6 @@ primary_region = 'arn'
   processes = ['app']
 
 [[vm]]
+  memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 1024
