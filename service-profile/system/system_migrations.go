@@ -4,7 +4,7 @@ func (s Storage) Migrations() error {
 	var err error
 	// Create profile table
 	_, err = s.Conn.Exec(`
-        create table if not exists profile (
+        create table if not exists profiles (
             id text primary key not null,
             created datetime not null default current_timestamp,
             updated datetime not null default current_timestamp,

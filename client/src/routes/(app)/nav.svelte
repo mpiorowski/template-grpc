@@ -51,9 +51,9 @@
 
                 <a
                     on:click={close}
-                    href="/users"
+                    href="/profile"
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
-                    {current === 'users'
+                    {current === 'profile'
                         ? 'bg-gray-800 text-white'
                         : 'text-gray-400 hover:bg-gray-800 hover:text-white'}"
                 >
@@ -67,16 +67,14 @@
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        class="feather feather-users"
+                        class="feather feather-user"
                     >
                         <path
-                            d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
                         ></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    Users
+                    Profile
                 </a>
             </li>
             <li>

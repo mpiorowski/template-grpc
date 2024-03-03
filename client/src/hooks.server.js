@@ -1,6 +1,6 @@
 import { UserRole } from "$lib/proto/proto/UserRole";
 import { grpcSafe } from "$lib/server/safe";
-import { usersService } from "$lib/server/grpc";
+import { authService } from "$lib/server/grpc";
 import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { redirect } from "@sveltejs/kit";
@@ -56,7 +56,7 @@ export async function handle({ event, resolve }) {
     const metadata = createMetadata(token);
     /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
     const auth = await new Promise((res) => {
-        usersService.Auth({}, metadata, grpcSafe(res));
+        authService.Auth({}, metadata, grpcSafe(res));
     });
     if (!auth.success || !auth.data.token || !auth.data.user) {
         logger.error("Error during auth");

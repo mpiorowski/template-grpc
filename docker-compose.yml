@@ -9,7 +9,8 @@ services:
         JWT_SECRET: ${JWT_SECRET}
         PUBLIC_DIRECTUS_URL: https://template-directus.fly.dev
         PUBLIC_AUTH_URL: http://localhost:3001
-        USERS_URI: service-auth:3002
+        AUTH_URI: service-auth:3002
+        PROFILE_URI: service-profile:3003
     volumes:
       - ./client/src:/client/src
       - ./client/.svelte-kit:/client/.svelte-kit
@@ -72,5 +73,5 @@ services:
       CERT_PATH: /etc/letsencrypt/live/example.com/fullchain.pem
       KEY_PATH: /etc/letsencrypt/live/example.com/privkey.pem
       JWT_SECRET: ${JWT_SECRET}
-      TURSO_URL: libsql://template-auth-mpiorowski.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDk0OTY2MDUsImlkIjoiZTRmZmYzYmItZDk5OS0xMWVlLWI1ZDQtZjY5YmQyNmE1NGJhIn0.lDQtHdP8xIZb8IgJkTyKPTh7WIgOVcBp1l4u59B6GAXWh53EXF9AUpTzltgOItZNmufMyEEbolcRC1EbrwftBw
+      TURSO_URL: libsql://template-profile-mpiorowski.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDk0OTY2MDUsImlkIjoiZTRmZmYzYmItZDk5OS0xMWVlLWI1ZDQtZjY5YmQyNmE1NGJhIn0.lDQtHdP8xIZb8IgJkTyKPTh7WIgOVcBp1l4u59B6GAXWh53EXF9AUpTzltgOItZNmufMyEEbolcRC1EbrwftBw
     command: sh -c "go run /server/."
