@@ -1,5 +1,3 @@
-import { logger } from "./logger";
-
 /**
  * @param {Promise<T> | (() => T)} promiseOrFunc
  * @returns {Promise<import("./safe.types").Safe<T>> | import("./safe.types").Safe<T>}
@@ -66,7 +64,6 @@ export function grpcSafe(res) {
      */
     return (err, data) => {
         if (err) {
-            logger.error(err);
             if (err.code === 3) {
                 let fields = [];
                 try {
@@ -90,7 +87,6 @@ export function grpcSafe(res) {
             });
         }
         if (!data) {
-            logger.error("No data returned");
             return res({
                 success: false,
                 error: "No data returned",

@@ -2,7 +2,8 @@ syntax = "proto3";
 option go_package = "powerit/proto";
 package proto;
 
-import "users.proto";
+import "auth.proto";
+import "profile.proto";
 
 message Empty {}
 
@@ -28,10 +29,16 @@ message StripeUrlResponse {
     string url = 1;
 }
 
-service UsersService {
+service AuthService {
     rpc CreateUser(Empty) returns (Id) {}
     rpc Auth(Empty) returns (AuthResponse) {}
 
     rpc CreateStripeCheckout(Empty) returns (StripeUrlResponse) {}
     rpc CreateStripePortal(Empty) returns (StripeUrlResponse) {}
+}
+
+service ProfileService {
+    rpc GetProfile(Empty) returns (Profile) {}
+    rpc InsertProfile(Profile) returns (Profile) {}
+    rpc UpdateProfile(Profile) returns (Profile) {}
 }

@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for template-directus on 2024-02-01T16:21:36+01:00
+# fly.toml app configuration file generated for template-directus on 2024-03-03T10:00:14+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -6,17 +6,25 @@
 app = 'template-directus'
 primary_region = 'arn'
 
-[env]
-  KEY = "jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi"
-  SECRET = "sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje"
-  ADMIN_EMAIL = "admin@gmail.com"
-  ADMIN_PASSWORD = "A1m2n"
-  DB_CLIENT = 'sqlite3'
-  DB_FILENAME = '/directus/database/data.db'
+[build]
 
-[mounts]
-  source = 'directus'
-  destination = '/directus'
+[env]
+  ADMIN_EMAIL = 'admin@gmail.com'
+  ADMIN_PASSWORD = 'A1m2n'
+  DB_CLIENT = 'sqlite3'
+  DB_FILENAME = '/data/data.db'
+  KEY = 'jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi'
+  PUBLIC_URL = 'https://template-directus.fly.dev'
+  SECRET = 'sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje'
+  STORAGE_LOCAL_ROOT = '/data'
+  EMAIL_VERIFY_SETUP = true
+  EMAIL_TRANSPORT = 'sendgrid'
+  EMAIL_FROM = 'email@upsend.app'
+  # EMAIL_SENDGRID_API_KEY = set using fly secrets set EMAIL_SENDGRID_API_KEY=your-api-key
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
 
 [http_service]
   internal_port = 8055

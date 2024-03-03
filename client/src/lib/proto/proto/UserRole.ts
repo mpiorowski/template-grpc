@@ -1,4 +1,4 @@
-// Original file: proto/users.proto
+// Original file: proto/auth.proto
 
 export const UserRole = {
   ROLE_UNSET: 'ROLE_UNSET',

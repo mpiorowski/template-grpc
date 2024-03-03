@@ -11,11 +11,11 @@
         <li class="flex flex-col gap-4 rounded-xl border p-4">
             <h2>{article.title}</h2>
             <img
-                src="{PUBLIC_DIRECTUS_URL}/assets/{article.image}"
+                src="{PUBLIC_DIRECTUS_URL}/assets/{article.cover}"
                 alt={article.title}
                 class="w-1/2"
             />
-            <div>{article.content}</div>
+            <div>{article.description}</div>
         </li>
     {/each}
 </ul>

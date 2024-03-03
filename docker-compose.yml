@@ -7,11 +7,9 @@ services:
       args:
         TARGET: development
         JWT_SECRET: ${JWT_SECRET}
-        PUBLIC_AUTH_URL: http://localhost:3001
         PUBLIC_DIRECTUS_URL: https://template-directus.fly.dev
-        USERS_URI: service-users:3002
-    depends_on:
-      - directus
+        PUBLIC_AUTH_URL: http://localhost:3001
+        USERS_URI: service-auth:3002
     volumes:
       - ./client/src:/client/src
       - ./client/.svelte-kit:/client/.svelte-kit
@@ -19,14 +17,14 @@ services:
       - 3000:3000
     command: sh -c "npm run dev"
 
-  service-users:
-    container_name: template-service-users
+  service-auth:
+    container_name: template-service-auth
     working_dir: /server
     build:
-      context: ./service-users
+      context: ./service-auth
       target: dev
     volumes:
-      - ./service-users:/server
+      - ./service-auth:/server
     ports:
       - 3001:3001
       - 3002:3002
@@ -46,9 +44,10 @@ services:
       STRIPE_API_KEY: ${STRIPE_API_KEY}
       STRIPE_PRICE_ID: price_1OmhP6HRNcZGXxTidRkfuTFr
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET} 
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      TURSO_URL: libsql://template-auth-mpiorowski.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDk0OTY1ODQsImlkIjoiZjFhZDljNWYtZDk5OS0xMWVlLWI1ZDQtZjY5YmQyNmE1NGJhIn0._WA1LseSwbzFWwcRz9D3w6dC36OyooMemEGS8xZaRZBvSEwBcS2XviqMxeC7qGB1om-2tkLiKndn-ZQftrACCQ
     command: sh -c "go run /server/."
 
   redis:
@@ -58,29 +57,20 @@ services:
       - "6379:6379"
     command: redis-server --requirepass 12345
 
-  directus:
-    container_name: template-directus
+  service-profile:
+    container_name: template-service-profile
+    working_dir: /server
     build:
-      context: ./directus
-    ports:
-      - 8055:8055
+      context: ./service-profile
+      target: dev
     volumes:
-      - ./directus/database:/directus/database
-      - ./directus/uploads:/directus/uploads
-      - ./directus/extensions:/directus/extensions
+      - ./service-profile:/server
     environment:
-      PUBLIC_URL: http://0.0.0.0:8055
-      KEY: jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi
-      SECRET: sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje
-      ADMIN_EMAIL: admin@gmail.com
-      ADMIN_PASSWORD: A1m2n
-      DB_CLIENT: sqlite3
-      DB_FILENAME: /directus/database/data.db
-      EMAIL_VERIFY_SETUP: true
-      EMAIL_TRANSPORT: sendgrid
-      EMAIL_FROM: email@upsend.app
-      EMAIL_SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      WEBSOCKETS_ENABLED: true
-      # CACHE_ENABLED: "true"
-      # CACHE_STORE: "redis"
-      # REDIS: "redis://cache:6379"
+      LOG_LEVEL: debug
+      GRPC_PORT: 3003
+      TLS: "false"
+      CERT_PATH: /etc/letsencrypt/live/example.com/fullchain.pem
+      KEY_PATH: /etc/letsencrypt/live/example.com/privkey.pem
+      JWT_SECRET: ${JWT_SECRET}
+      TURSO_URL: libsql://template-auth-mpiorowski.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MDk0OTY2MDUsImlkIjoiZTRmZmYzYmItZDk5OS0xMWVlLWI1ZDQtZjY5YmQyNmE1NGJhIn0.lDQtHdP8xIZb8IgJkTyKPTh7WIgOVcBp1l4u59B6GAXWh53EXF9AUpTzltgOItZNmufMyEEbolcRC1EbrwftBw
+    command: sh -c "go run /server/."
