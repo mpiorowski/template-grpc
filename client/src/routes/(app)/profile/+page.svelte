@@ -16,6 +16,11 @@
 
     /** @type {import("./$types").PageData} */
     export let data;
+    /** @type {import("./$types").ActionData} */
+    export let form;
+    $: if (form?.error) {
+        toast.error("Error", form.error)
+    }
 
     export const countries = /** @type {const} */ ([
         "Poland",

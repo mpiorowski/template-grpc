@@ -52,7 +52,7 @@ function safeSync(func) {
  *
  * @template T - The type of data expected in the response.
  *
- * @param {(value: import("./safe.types").Safe<T>) => void} res - The callback function to handle the response.
+ * @param {(value: import("./safe.types").GrpcSafe<T>) => void} res - The callback function to handle the response.
  * @returns {(err: import("@grpc/grpc-js").ServiceError | null, data: T | undefined) => void} - A callback function to be used with gRPC response handling.
  */
 export function grpcSafe(res) {
@@ -72,6 +72,7 @@ export function grpcSafe(res) {
                     return res({
                         success: false,
                         error: err?.message || "Something went wrong",
+                        code: err.code,
                     });
                 }
 
@@ -79,10 +80,12 @@ export function grpcSafe(res) {
                     success: false,
                     error: "Invalid argument",
                     fields: fields,
+                    code: err.code,
                 });
             }
             return res({
                 success: false,
+                code: err.code,
                 error: err?.message || "Something went wrong",
             });
         }
@@ -90,6 +93,7 @@ export function grpcSafe(res) {
             return res({
                 success: false,
                 error: "No data returned",
+                code: 0,
             });
         }
         res({ data, success: true });

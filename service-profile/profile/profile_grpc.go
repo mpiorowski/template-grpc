@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func GetProfile(ctx context.Context, storage system.Storage) (*pb.Profile, error) {
@@ -22,7 +24,7 @@ func GetProfile(ctx context.Context, storage system.Storage) (*pb.Profile, error
 	profile, err := db.selectProfileByUserId(claims.Id)
 	if err != nil {
 		slog.Error("Error selecting profile by user id", "db.selectProfileByUserId", err)
-		return nil, err
+		return nil, status.Error(codes.NotFound, "Profile not found")
 	}
 	return profile, nil
 }
@@ -43,6 +45,7 @@ func InsertProfile(ctx context.Context, storage system.Storage, profile *pb.Prof
 	}
 	profile.Id = id.String()
 	profile.UserId = claims.Id
+    profile.Active = false
 	profile, err = db.insertProfile(profile)
 	if err != nil {
 		slog.Error("Error inserting profile", "db.insertProfile", err)

@@ -3,6 +3,7 @@ import { profileService } from "$lib/server/grpc";
 import { perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { grpcSafe } from "$lib/server/safe";
+import { Status } from "@grpc/grpc-js/build/src/constants";
 import { error, fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
@@ -13,7 +14,15 @@ export async function load({ locals }) {
         profileService.GetProfile({}, metadata, grpcSafe(r)),
     );
     if (!profile.success) {
-        return error(500, profile.error);
+        if (profile.code === Status.NOT_FOUND) {
+            const newProfile = await new Promise((r) =>
+                profileService.InsertProfile({}, metadata, grpcSafe(r)),
+            );
+            if (!newProfile.success) {
+                throw error(500, newProfile.error);
+            }
+        }
+        throw error(500, profile.error);
     }
     end();
     return {
@@ -29,7 +38,7 @@ export const actions = {
 
         /** @type {import("$lib/proto/proto/Profile").Profile} */
         const data = {
-            active: getValue(form, "active"),
+            active: getValue(form, "active") === "on",
             username: getValue(form, "username"),
             about: getValue(form, "about"),
             first_name: getValue(form, "first_name"),
@@ -49,11 +58,12 @@ export const actions = {
         };
 
         const metadata = createMetadata(locals.user.id);
+        /** @type {import("$lib/server/safe.types").GrpcSafe<import("$lib/proto/proto/Profile").Profile__Output>} */
         const profile = await new Promise((r) =>
             profileService.UpdateProfile(data, metadata, grpcSafe(r)),
         );
         if (!profile.success) {
-            throw fail(500, { error: profile.error });
+            return fail(500, { error: profile.error });
         }
         end();
         return { profile: profile.data };

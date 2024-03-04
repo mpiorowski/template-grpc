@@ -6,7 +6,7 @@ export interface Profile {
   'created'?: (string);
   'updated'?: (string);
   'user_id'?: (string);
-  'active'?: (string);
+  'active'?: (boolean);
   'username'?: (string);
   'about'?: (string);
   'first_name'?: (string);
@@ -30,7 +30,7 @@ export interface Profile__Output {
   'created': (string);
   'updated': (string);
   'user_id': (string);
-  'active': (string);
+  'active': (boolean);
   'username': (string);
   'about': (string);
   'first_name': (string);

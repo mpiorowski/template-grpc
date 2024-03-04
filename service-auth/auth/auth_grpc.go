@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	pb "service-auth/proto"
 	"service-auth/system"
@@ -13,6 +12,8 @@ import (
 	"github.com/stripe/stripe-go/v76"
 	portal_session "github.com/stripe/stripe-go/v76/billingportal/session"
 	checkout_session "github.com/stripe/stripe-go/v76/checkout/session"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 /**
@@ -24,11 +25,13 @@ import (
  * 6. Get user from database
  * 7. Return user and new phantom token
  */
-func Auth(ctx context.Context, storage system.Storage) (*pb.User, string, error) {
+func Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error) {
+	defer system.Perf("Auth", time.Now())
 	var authDB = NewAuthDB(&storage)
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
-		return nil, "", fmt.Errorf("extractToken: %w", err)
+		slog.Error("Error extracting token", "system.ExtractToken", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 	// get oauth token from redis
 	rdb := redis.NewClient(&redis.Options{
@@ -37,17 +40,20 @@ func Auth(ctx context.Context, storage system.Storage) (*pb.User, string, error)
 	})
 	userId, err := rdb.Get(context.Background(), claims.Id).Result()
 	if err != nil {
-		return nil, "", fmt.Errorf("rdb.Get: %w", err)
+		slog.Error("Error getting token from redis", "rdb.Get", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 	// get user from database
 	user, err := authDB.selectUserById(userId)
 	if err != nil {
-		return nil, "", fmt.Errorf("selectUserById: %w", err)
+		slog.Error("Error selecting user by id", "authDB.selectUserById", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 	// create new phantom token with a 7 day expiration
 	tokenId, err := uuid.NewV7()
 	if err != nil {
-		return nil, "", fmt.Errorf("uuid.NewV7: %w", err)
+		slog.Error("Error creating new token", "uuid.NewV7", err)
+		return nil, status.Error(codes.Internal, "Internal error")
 	}
 	go func() {
 		err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
@@ -57,32 +63,28 @@ func Auth(ctx context.Context, storage system.Storage) (*pb.User, string, error)
 	}()
 	subscribed := checkIfSubscribed(user, authDB)
 	user.SubscriptionActive = subscribed
-	return user, tokenId.String(), nil
+	return &pb.AuthResponse{
+		Token: tokenId.String(),
+		User:  user,
+	}, nil
 }
 
-func GetUser(ctx context.Context, storage system.Storage) (*pb.User, error) {
-	var authDB = NewAuthDB(&storage)
-	claims, err := system.ExtractToken(ctx)
+func CreateStripeCheckout(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error) {
+	defer system.Perf("CreateStripeCheckout", time.Now())
+	user, err := getUser(ctx, storage)
 	if err != nil {
-		return nil, fmt.Errorf("extractToken: %w", err)
+		slog.Error("Error authorizing user", "auth.GetUser", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
-	user, err := authDB.selectUserById(claims.Id)
-	if err != nil {
-		return nil, fmt.Errorf("selectUserById: %w", err)
-	}
-	subscribed := checkIfSubscribed(user, authDB)
-	user.SubscriptionActive = subscribed
-	return user, nil
-}
 
-func CreateStripeCheckout(user *pb.User, storage system.Storage) (string, error) {
 	var authDB = NewAuthDB(&storage)
 	customerId := user.SubscriptionId
 	if customerId == "" {
 		var err error
 		customerId, err = createStripeUser(user.Id, user.Email, authDB)
 		if err != nil {
-			return "", fmt.Errorf("createStripeUser: %w", err)
+			slog.Error("Error creating stripe user", "createStripeUser", err)
+			return nil, status.Error(codes.Internal, "Internal error")
 		}
 	}
 
@@ -106,17 +108,26 @@ func CreateStripeCheckout(user *pb.User, storage system.Storage) (string, error)
 
 	session, err := checkout_session.New(params)
 	if err != nil {
-		return "", err
+		slog.Error("Error creating stripe checkout", "checkout_session.New", err)
+		return nil, status.Error(codes.Internal, "Internal error")
 	}
 
 	err = authDB.updateSubscriptionCheck(user.Id, "1970-01-01T00:00:00Z")
 	if err != nil {
 		slog.Error("Error updating subscription check date", "updateSubscriptionCheck", err)
 	}
-	return session.URL, nil
+	return &pb.StripeUrlResponse{
+		Url: session.URL,
+	}, nil
 }
 
-func CreateStripePortal(user *pb.User) (string, error) {
+func CreateStripePortal(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error) {
+	defer system.Perf("CreateStripePortal", time.Now())
+	user, err := getUser(ctx, storage)
+	if err != nil {
+		slog.Error("Error authorizing user", "auth.GetUser", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
+	}
 	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.BillingPortalSessionParams{
@@ -125,8 +136,11 @@ func CreateStripePortal(user *pb.User) (string, error) {
 	}
 	session, err := portal_session.New(params)
 	if err != nil {
-		return "", err
+		slog.Error("Error creating stripe portal", "portal_session.New", err)
+		return nil, status.Error(codes.Internal, "Internal error")
 	}
 
-	return session.URL, nil
+	return &pb.StripeUrlResponse{
+		Url: session.URL,
+	}, nil
 }

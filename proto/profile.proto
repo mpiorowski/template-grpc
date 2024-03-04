@@ -7,7 +7,7 @@ message Profile {
     string created = 2;
     string updated = 3;
     string user_id = 4;
-    string active = 5;
+    bool   active = 5;
     string username = 6;
     string about = 7;
     string first_name = 8;

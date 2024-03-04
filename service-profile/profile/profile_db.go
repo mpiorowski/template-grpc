@@ -4,6 +4,7 @@ import (
 	"fmt"
 	pb "service-profile/proto"
 	"service-profile/system"
+	"strings"
 )
 
 type ProfileDBProvider interface {
@@ -89,7 +90,7 @@ func (db ProfileDBImpl) insertProfile(profile *pb.Profile) (*pb.Profile, error) 
 		profile.City,
 		profile.State,
 		profile.Zip,
-		profile.EmailNotifications,
+		strings.Join(profile.EmailNotifications, ","),
 		profile.PushNotification,
 		profile.Resume,
 		profile.Cover,
