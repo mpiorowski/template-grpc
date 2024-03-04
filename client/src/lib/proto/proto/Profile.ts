@@ -17,7 +17,7 @@ export interface Profile {
   'city'?: (string);
   'state'?: (string);
   'zip'?: (string);
-  'email_notifications'?: (string)[];
+  'email_notifications'?: (string);
   'push_notification'?: (string);
   'resume'?: (string);
   'cover'?: (string);
@@ -41,7 +41,7 @@ export interface Profile__Output {
   'city': (string);
   'state': (string);
   'zip': (string);
-  'email_notifications': (string)[];
+  'email_notifications': (string);
   'push_notification': (string);
   'resume': (string);
   'cover': (string);

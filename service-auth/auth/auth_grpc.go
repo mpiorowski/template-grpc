@@ -26,7 +26,7 @@ import (
  * 7. Return user and new phantom token
  */
 func Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error) {
-	defer system.Perf("Auth", time.Now())
+	defer system.Perf("auth", time.Now())
 	var authDB = NewAuthDB(&storage)
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {

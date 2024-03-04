@@ -65,10 +65,10 @@ export async function handle({ event, resolve }) {
 
     event.locals.user = auth.data.user;
     event.locals.token = auth.data.token;
-    logger.debug(event.locals.user, "user");
+    // logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/articles");
+        throw redirect(302, "/contact");
     }
 
     end();

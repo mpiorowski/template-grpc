@@ -25,27 +25,27 @@ type Profile struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id                 string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Created            string   `protobuf:"bytes,2,opt,name=created,proto3" json:"created,omitempty"`
-	Updated            string   `protobuf:"bytes,3,opt,name=updated,proto3" json:"updated,omitempty"`
-	UserId             string   `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Active             bool     `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
-	Username           string   `protobuf:"bytes,6,opt,name=username,proto3" json:"username,omitempty"`
-	About              string   `protobuf:"bytes,7,opt,name=about,proto3" json:"about,omitempty"`
-	FirstName          string   `protobuf:"bytes,8,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName           string   `protobuf:"bytes,9,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	Email              string   `protobuf:"bytes,10,opt,name=email,proto3" json:"email,omitempty"`
-	Country            string   `protobuf:"bytes,11,opt,name=country,proto3" json:"country,omitempty"`
-	StreetAddress      string   `protobuf:"bytes,12,opt,name=street_address,json=streetAddress,proto3" json:"street_address,omitempty"`
-	City               string   `protobuf:"bytes,13,opt,name=city,proto3" json:"city,omitempty"`
-	State              string   `protobuf:"bytes,14,opt,name=state,proto3" json:"state,omitempty"`
-	Zip                string   `protobuf:"bytes,15,opt,name=zip,proto3" json:"zip,omitempty"`
-	EmailNotifications []string `protobuf:"bytes,16,rep,name=email_notifications,json=emailNotifications,proto3" json:"email_notifications,omitempty"`
-	PushNotification   string   `protobuf:"bytes,17,opt,name=push_notification,json=pushNotification,proto3" json:"push_notification,omitempty"`
-	Resume             string   `protobuf:"bytes,18,opt,name=resume,proto3" json:"resume,omitempty"`
-	Cover              string   `protobuf:"bytes,19,opt,name=cover,proto3" json:"cover,omitempty"`
-	Position           string   `protobuf:"bytes,20,opt,name=position,proto3" json:"position,omitempty"`
-	Skills             string   `protobuf:"bytes,21,opt,name=skills,proto3" json:"skills,omitempty"`
+	Id                 string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Created            string `protobuf:"bytes,2,opt,name=created,proto3" json:"created,omitempty"`
+	Updated            string `protobuf:"bytes,3,opt,name=updated,proto3" json:"updated,omitempty"`
+	UserId             string `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Active             bool   `protobuf:"varint,5,opt,name=active,proto3" json:"active,omitempty"`
+	Username           string `protobuf:"bytes,6,opt,name=username,proto3" json:"username,omitempty"`
+	About              string `protobuf:"bytes,7,opt,name=about,proto3" json:"about,omitempty"`
+	FirstName          string `protobuf:"bytes,8,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName           string `protobuf:"bytes,9,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Email              string `protobuf:"bytes,10,opt,name=email,proto3" json:"email,omitempty"`
+	Country            string `protobuf:"bytes,11,opt,name=country,proto3" json:"country,omitempty"`
+	StreetAddress      string `protobuf:"bytes,12,opt,name=street_address,json=streetAddress,proto3" json:"street_address,omitempty"`
+	City               string `protobuf:"bytes,13,opt,name=city,proto3" json:"city,omitempty"`
+	State              string `protobuf:"bytes,14,opt,name=state,proto3" json:"state,omitempty"`
+	Zip                string `protobuf:"bytes,15,opt,name=zip,proto3" json:"zip,omitempty"`
+	EmailNotifications string `protobuf:"bytes,16,opt,name=email_notifications,json=emailNotifications,proto3" json:"email_notifications,omitempty"`
+	PushNotification   string `protobuf:"bytes,17,opt,name=push_notification,json=pushNotification,proto3" json:"push_notification,omitempty"`
+	Resume             string `protobuf:"bytes,18,opt,name=resume,proto3" json:"resume,omitempty"`
+	Cover              string `protobuf:"bytes,19,opt,name=cover,proto3" json:"cover,omitempty"`
+	Position           string `protobuf:"bytes,20,opt,name=position,proto3" json:"position,omitempty"`
+	Skills             string `protobuf:"bytes,21,opt,name=skills,proto3" json:"skills,omitempty"`
 }
 
 func (x *Profile) Reset() {
@@ -185,11 +185,11 @@ func (x *Profile) GetZip() string {
 	return ""
 }
 
-func (x *Profile) GetEmailNotifications() []string {
+func (x *Profile) GetEmailNotifications() string {
 	if x != nil {
 		return x.EmailNotifications
 	}
-	return nil
+	return ""
 }
 
 func (x *Profile) GetPushNotification() string {
@@ -257,7 +257,7 @@ var file_profile_proto_rawDesc = []byte{
 	0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x7a, 0x69, 0x70, 0x18, 0x0f, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x03, 0x7a, 0x69, 0x70, 0x12, 0x2f, 0x0a, 0x13, 0x65, 0x6d, 0x61, 0x69,
 	0x6c, 0x5f, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18,
-	0x10, 0x20, 0x03, 0x28, 0x09, 0x52, 0x12, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x4e, 0x6f, 0x74, 0x69,
+	0x10, 0x20, 0x01, 0x28, 0x09, 0x52, 0x12, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x4e, 0x6f, 0x74, 0x69,
 	0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x2b, 0x0a, 0x11, 0x70, 0x75, 0x73,
 	0x68, 0x5f, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x11,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x10, 0x70, 0x75, 0x73, 0x68, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69,

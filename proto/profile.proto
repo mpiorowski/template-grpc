@@ -18,7 +18,7 @@ message Profile {
     string city = 13;
     string state = 14;
     string zip = 15;
-    repeated string email_notifications = 16;
+    string email_notifications = 16;
     string push_notification = 17;
     string resume = 18;
     string cover = 19;

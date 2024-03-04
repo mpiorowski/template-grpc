@@ -5,8 +5,8 @@
     const articles = data.articles;
 </script>
 
-<ul class="mt-6 max-w-4xl list-outside list-disc">
-    <h2 class="text-xl">Articles</h2>
+<ul class="max-w-4xl list-outside list-disc">
+    <h2 class="mb-10 text-xl">Articles</h2>
     {#each articles as article}
         <li class="flex flex-col gap-4 rounded-xl border p-4">
             <h2>{article.title}</h2>

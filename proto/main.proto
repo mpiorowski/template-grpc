@@ -39,6 +39,5 @@ service AuthService {
 
 service ProfileService {
     rpc GetProfile(Empty) returns (Profile) {}
-    rpc InsertProfile(Profile) returns (Profile) {}
     rpc UpdateProfile(Profile) returns (Profile) {}
 }

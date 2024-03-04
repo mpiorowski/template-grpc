@@ -9,7 +9,7 @@ func (s Storage) Migrations() error {
             created datetime not null default current_timestamp,
             updated datetime not null default current_timestamp,
             user_id text unique not null,
-            active text not null,
+            active boolean not null,
             username text not null,
             about text not null,
             first_name text not null,

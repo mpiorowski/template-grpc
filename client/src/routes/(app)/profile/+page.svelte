@@ -19,7 +19,7 @@
     /** @type {import("./$types").ActionData} */
     export let form;
     $: if (form?.error) {
-        toast.error("Error", form.error)
+        toast.error("Error", form.error);
     }
 
     export const countries = /** @type {const} */ ([
@@ -40,6 +40,7 @@
     /** @type {boolean} */
     let openModal = false;
 
+    let active = data.profile.active ? "on" : "off";
     $: resume_file = new File([data.profile.resume], "resume");
     $: cover_file = new File([data.profile.cover], "cover");
 </script>
@@ -58,7 +59,7 @@
 {/if}
 
 <form
-    action="?/create_user"
+    action="?/update_profile"
     method="post"
     enctype="multipart/form-data"
     class="max-w-2xl"
@@ -89,6 +90,7 @@
         };
     }}
 >
+    <input type="hidden" name="id" value={data.profile.id} />
     <div class="space-y-12">
         <div class="border-b border-gray-600 pb-12">
             <div>
@@ -126,7 +128,7 @@
                     <Switch
                         name="active"
                         label="Active"
-                        bind:value={data.profile.active}
+                        bind:value={active}
                     />
                 </div>
                 <div class="sm:col-span-4">

@@ -7,21 +7,23 @@ import (
 	"service-profile/system"
 	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func GetProfile(ctx context.Context, storage system.Storage) (*pb.Profile, error) {
-	defer system.Perf("GetProfile", time.Now())
+	defer system.Perf("get_profile", time.Now())
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
 		slog.Error("Error extracting token", "system.ExtractToken", err)
-		return nil, err
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 
 	var db = NewProfileDB(storage)
-	profile, err := db.selectProfileByUserId(claims.Id)
+	profile, exists, err := db.selectProfileByUserId(claims.Id)
+	if !exists {
+		profile, err = db.insertProfile(&pb.Profile{UserId: claims.Id, Active: false})
+	}
 	if err != nil {
 		slog.Error("Error selecting profile by user id", "db.selectProfileByUserId", err)
 		return nil, status.Error(codes.NotFound, "Profile not found")
@@ -29,37 +31,12 @@ func GetProfile(ctx context.Context, storage system.Storage) (*pb.Profile, error
 	return profile, nil
 }
 
-func InsertProfile(ctx context.Context, storage system.Storage, profile *pb.Profile) (*pb.Profile, error) {
-	defer system.Perf("InsertProfile", time.Now())
-	claims, err := system.ExtractToken(ctx)
-	if err != nil {
-		slog.Error("Error extracting token", "system.ExtractToken", err)
-		return nil, err
-	}
-
-	var db = NewProfileDB(storage)
-	id, err := uuid.NewV7()
-	if err != nil {
-		slog.Error("Error generating uuid", "uuid.NewV7", err)
-		return nil, err
-	}
-	profile.Id = id.String()
-	profile.UserId = claims.Id
-    profile.Active = false
-	profile, err = db.insertProfile(profile)
-	if err != nil {
-		slog.Error("Error inserting profile", "db.insertProfile", err)
-		return nil, err
-	}
-	return profile, nil
-}
-
 func UpdateProfile(ctx context.Context, storage system.Storage, profile *pb.Profile) (*pb.Profile, error) {
-	defer system.Perf("UpdateProfile", time.Now())
+	defer system.Perf("update_profile", time.Now())
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
 		slog.Error("Error extracting token", "system.ExtractToken", err)
-		return nil, err
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 
 	var db = NewProfileDB(storage)
@@ -67,7 +44,7 @@ func UpdateProfile(ctx context.Context, storage system.Storage, profile *pb.Prof
 	profile, err = db.updateProfile(profile)
 	if err != nil {
 		slog.Error("Error updating profile", "db.updateProfile", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, "Internal error")
 	}
 	return profile, nil
 }
