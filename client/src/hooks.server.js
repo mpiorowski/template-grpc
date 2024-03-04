@@ -1,6 +1,6 @@
 import { UserRole } from "$lib/proto/proto/UserRole";
 import { grpcSafe } from "$lib/server/safe";
-import { usersService } from "$lib/server/grpc";
+import { authService } from "$lib/server/grpc";
 import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { redirect } from "@sveltejs/kit";
@@ -36,12 +36,13 @@ export async function handle({ event, resolve }) {
      * If so, set a temporary cookie with the token
      * On the next request, the new token will be used
      */
-    let token = event.url.searchParams.get("token");
+    let token = event.url.pathname.includes("/token/")
+        ? event.url.pathname.split("/token/")[1]
+        : "";
     if (token) {
         event.cookies.set("token", token, {
             path: "/",
             maxAge: 10,
-            domain: "localhost",
         });
         throw redirect(302, "/articles");
     }
@@ -55,7 +56,7 @@ export async function handle({ event, resolve }) {
     const metadata = createMetadata(token);
     /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
     const auth = await new Promise((res) => {
-        usersService.Auth({}, metadata, grpcSafe(res));
+        authService.Auth({}, metadata, grpcSafe(res));
     });
     if (!auth.success || !auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
@@ -64,10 +65,10 @@ export async function handle({ event, resolve }) {
 
     event.locals.user = auth.data.user;
     event.locals.token = auth.data.token;
-    logger.debug(event.locals.user, "user");
+    // logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/articles");
+        throw redirect(302, "/contact");
     }
 
     end();
@@ -75,7 +76,7 @@ export async function handle({ event, resolve }) {
     // max age is 30 days
     response.headers.append(
         "set-cookie",
-        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/; Domain=localhost;`
+        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/;`,
     );
     return response;
 }

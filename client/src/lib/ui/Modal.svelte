@@ -99,7 +99,7 @@
 </script>
 
 <div
-    class="relative z-10"
+    class="relative z-40"
     role={alert ? "alertdialog" : "dialog"}
     aria-labelledby="modal-title-{id}"
     aria-describedby="modal-description-{id}"
@@ -118,10 +118,10 @@
     <div
         in:fade={{ duration: 300, easing: cubicOut }}
         out:fade={{ duration: 200, easing: cubicIn }}
-        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        class="fixed inset-0 bg-gray-700 bg-opacity-75 transition-opacity"
     />
 
-    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div class="fixed inset-0 z-40 w-screen overflow-y-auto">
         <div
             class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
         >
@@ -139,7 +139,7 @@
                 use:portal
                 in:scale={{ duration: 300, easing: cubicOut, start: 0.95 }}
                 out:scale={{ duration: 200, easing: cubicIn, start: 0.95 }}
-                class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+                class="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
             >
                 <div class="sm:flex sm:items-start">
                     <div
@@ -162,7 +162,7 @@
                     </div>
                     <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                         <h3
-                            class="text-base font-semibold leading-6 text-gray-900"
+                            class="text-base font-semibold leading-6 text-gray-100"
                             id="modal-title-{id}"
                         >
                             {title}

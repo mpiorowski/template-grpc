@@ -1,6 +1,6 @@
 import protoLoader from "@grpc/proto-loader";
 import { credentials, loadPackageDefinition } from "@grpc/grpc-js";
-import { TARGET, USERS_URI } from "$env/static/private";
+import { TARGET, AUTH_URI, PROFILE_URI } from "$env/static/private";
 
 export const packageDefinition = protoLoader.loadSync(
     "./src/lib/proto/main.proto",
@@ -23,4 +23,5 @@ const cr =
         ? credentials.createSsl()
         : credentials.createInsecure();
 
-export const usersService = new proto.proto.UsersService(USERS_URI, cr);
+export const authService = new proto.proto.AuthService(AUTH_URI, cr);
+export const profileService = new proto.proto.ProfileService(PROFILE_URI, cr);

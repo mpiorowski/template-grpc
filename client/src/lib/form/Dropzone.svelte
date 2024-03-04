@@ -36,8 +36,8 @@
     <label
         id={label}
         for={name}
-        class="mt-2 flex h-[200px] cursor-pointer justify-center rounded-lg border border-dashed border-gray-600
-        focus-within:border-0 focus-within:ring-2 focus-within:ring-indigo-600 hover:bg-gray-800
+        class="mt-2 flex h-[200px] cursor-pointer justify-center rounded-lg border border-dashed border-gray-600 bg-gray-800
+        focus-within:border-0 focus-within:ring-2 focus-within:ring-indigo-600 hover:border-gray-500
         {error ? 'border-0 ring-2 ring-red-600' : ''}"
     >
         <input
@@ -76,7 +76,7 @@
                         {file.size} bytes
                     </p>
                 {:else}
-                    <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                    <div class="mt-4 flex text-sm leading-6">
                         <span class="font-semibold">
                             Click to upload an image
                         </span>

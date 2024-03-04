@@ -111,7 +111,7 @@
             on:click|stopPropagation={() => (open = !open)}
             id={name}
             type="button"
-            class="relative w-full cursor-default rounded-md bg-gray-800 py-1.5 pl-3 pr-10 text-left shadow-inset focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            class="relative w-full cursor-default rounded-md bg-gray-800 py-1.5 pl-3 pr-10 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
             aria-haspopup="listbox"
             aria-describedby="{name}-description"
             aria-expanded={open}
