@@ -10,17 +10,17 @@ primary_region = 'arn'
 
 [env]
   ADMIN_EMAIL = 'admin@gmail.com'
-  ADMIN_PASSWORD = 'A1m2n'
   DB_CLIENT = 'sqlite3'
   DB_FILENAME = '/data/data.db'
   KEY = 'jsklrhqikrgbqhujfgqlrqgyuieroqyiureqi'
   PUBLIC_URL = 'https://template-directus.fly.dev'
-  SECRET = 'sqhlasjfghassdguqwgfbjhqvrjhqwerfqwjevgqwjegqwje'
   STORAGE_LOCAL_ROOT = '/data'
   EMAIL_VERIFY_SETUP = true
   EMAIL_TRANSPORT = 'sendgrid'
   EMAIL_FROM = 'email@upsend.app'
-  # EMAIL_SENDGRID_API_KEY = set using fly secrets set EMAIL_SENDGRID_API_KEY=your-api-key
+  # fly secrets set SECRET=your-secret
+  # fly secrets set ADMIN_PASSWORD=your-password
+  # fly secrets set EMAIL_SENDGRID_API_KEY=your-api-key
 
 [[mounts]]
   source = 'data'
