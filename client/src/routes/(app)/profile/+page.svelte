@@ -41,6 +41,7 @@
     let openModal = false;
 
     let active = data.profile.active ? "on" : "off";
+    let email_notifications = data.profile.email_notifications.split(",");
     $: resume_file = new File([data.profile.resume], "resume");
     $: cover_file = new File([data.profile.cover], "cover");
 </script>
@@ -320,7 +321,7 @@
                             name="email_notifications"
                             value="comments"
                             label="Comments"
-                            bind:group={data.profile.email_notifications}
+                            bind:group={email_notifications}
                             description="Get notified when someones posts a comment on a posting."
                         />
                         <Checkbox
@@ -328,7 +329,7 @@
                             name="email_notifications"
                             value="candidates"
                             label="Candidates"
-                            bind:group={data.profile.email_notifications}
+                            bind:group={email_notifications}
                             description="Get notified when a candidate applies for a job."
                         />
                         <Checkbox
@@ -336,7 +337,7 @@
                             name="email_notifications"
                             value="offers"
                             label="Offers"
-                            bind:group={data.profile.email_notifications}
+                            bind:group={email_notifications}
                             description="Get notified when a candidate accepts or rejects an offer."
                         />
                     </div>
