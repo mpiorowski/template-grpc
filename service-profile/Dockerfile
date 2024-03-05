@@ -19,7 +19,7 @@ RUN CGO_ENABLED=1 GOOS=linux go build -v -o / /server/...
 FROM debian:bookworm-slim as prod
 WORKDIR /
 
-COPY --from=build /powerit /powerit
+COPY --from=build /service-profile /service-profile
 
 # Install tls certificates
 RUN apt-get update && apt-get install -y ca-certificates

@@ -3,6 +3,8 @@ import api from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 import { error } from "@sveltejs/kit";
 
+export const prerender = true;
+
 /**
  * @typedef {{
  * id: number;

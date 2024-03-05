@@ -1,6 +1,6 @@
 import { getAllValues, getValue } from "$lib/helpers";
 import { profileService } from "$lib/server/grpc";
-import { perf } from "$lib/server/logger";
+import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { grpcSafe } from "$lib/server/safe";
 import { error, fail } from "@sveltejs/kit";
@@ -17,6 +17,7 @@ export async function load({ locals }) {
         throw error(500, profile.error);
     }
     end();
+    logger.info(profile.data);
     return {
         profile: profile.data,
     };

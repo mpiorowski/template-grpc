@@ -31,10 +31,12 @@ COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
 RUN npm install
 
+RUN --mount=type=secret,id=JWT_SECRET echo "JWT_SECRET=$(cat /run/secrets/JWT_SECRET)" >> .env
+
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
-ARG JWT_SECRET
-RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
+# ARG JWT_SECRET
+# RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
 ARG PUBLIC_DIRECTUS_URL 
 RUN echo "PUBLIC_DIRECTUS_URL=${PUBLIC_DIRECTUS_URL}" >> .env
 ARG PUBLIC_AUTH_URL 

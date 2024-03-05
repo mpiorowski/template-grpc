@@ -8,10 +8,11 @@ primary_region = 'arn'
 
 [build.args]
   TARGET = 'production'
-  JWT_SECRET = 'JWT_SECRET'
   PUBLIC_DIRECTUS_URL = 'https://template-directus.fly.dev'
-  PUBLIC_AUTH_URL = 'https://template-service-users.fly.dev'
-  USERS_URI = 'template-service-users.fly.dev:3002'
+  PUBLIC_AUTH_URL = 'https://template-service-auth.fly.dev'
+  PUBLIC_PROFILE_AUTH = 'https://template-service-profile.fly.dev'
+  AUTH_URI = 'template-service-auth.fly.dev:3002'
+  PROFILE_URI = 'template-service-profile.fly.dev:3003'
 
 [http_service]
   internal_port = 3000
