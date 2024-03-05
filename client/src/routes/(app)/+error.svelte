@@ -15,7 +15,7 @@
             {$page.error?.message ?? "Unknown error"}
         </p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
-            <Button class="flex-1" href="/">Go back home</Button>
+            <Button class="flex-1" href="/contact">Go back home</Button>
             <a
                 href="/support"
                 target="_blank"

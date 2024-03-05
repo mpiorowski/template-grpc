@@ -11,7 +11,7 @@
     class="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 pb-4 ring-1 ring-white/5"
 >
     <div class="flex h-16 shrink-0 items-center">
-        <a on:click={close} href="/" class="text-2xl font-bold text-indigo-600">
+        <a on:click={close} href="/contact" class="text-2xl font-bold text-indigo-600">
             Template
         </a>
     </div>

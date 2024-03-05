@@ -4,9 +4,28 @@ import { authService } from "$lib/server/grpc";
 import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { redirect } from "@sveltejs/kit";
+import { building } from "$app/environment";
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
+    if (building) {
+        event.locals.user = {
+            id: "",
+            created: "",
+            updated: "",
+            deleted: "",
+            email: "",
+            avatar: "",
+            role: UserRole.ROLE_UNSET,
+            sub: "",
+            subscription_id: "",
+            subscription_end: "",
+            subscription_check: "",
+            subscription_active: false,
+        };
+        return await resolve(event);
+    }
+
     const end = perf("auth");
     event.locals.user = {
         id: "",
