@@ -46,6 +46,10 @@
 }
 
 html {
+  scroll-behavior: unset !important;
+}
+
+html {
     @apply h-full;
 }
 
