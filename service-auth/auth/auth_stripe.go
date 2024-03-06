@@ -14,6 +14,7 @@ import (
 )
 
 func checkIfSubscribed(user *pb.User, authDB AuthDBProvider) bool {
+	defer system.Perf("check_if_subscribed", time.Now())
 	if user.SubscriptionId == "" {
 		return false
 	}

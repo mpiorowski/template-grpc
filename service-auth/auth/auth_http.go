@@ -7,9 +7,7 @@ import (
 	"service-auth/system"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/redis/go-redis/v9"
 	"golang.org/x/oauth2"
 )
 
@@ -17,10 +15,12 @@ import (
  *  Oauth login
  *  @api {get} /oauth-login/:provider Oauth login
  */
-func OauthLogin(c echo.Context) error {
+func OauthLogin(c echo.Context, storage system.Storage) error {
+	defer system.Perf("oauth_login", time.Now())
+	var authDB = NewAuthDB(&storage)
 	config, err := OAuthConfig.getOAuthConfig(c.Param("provider"))
 	if err != nil {
-		slog.Error("Error getting provider", "configProvider.getOAuthConfig", err)
+		slog.Error("Error getting provider", "getOAuthConfig", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
@@ -28,13 +28,9 @@ func OauthLogin(c echo.Context) error {
 	state := system.GenerateRandomState(32)
 	verifier := oauth2.GenerateVerifier()
 	// store state and verifier
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
-	})
-	err = rdb.Set(context.Background(), state, verifier, 5*time.Minute).Err()
+	_, err = authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
 	if err != nil {
-		slog.Error("Error setting state and verifier", "rdb.Set", err)
+		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 	// Redirect user to consent page to ask for permission
@@ -47,30 +43,33 @@ func OauthLogin(c echo.Context) error {
  *  @api {get} /oauth-callback/:provider Oauth callback
  */
 func OauthCallback(c echo.Context, storage system.Storage) error {
+	defer system.Perf("oauth_callback", time.Now())
+	var authDB = NewAuthDB(&storage)
 	provider := c.Param("provider")
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
 
 	// get verifier from state
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
-	})
-	verifier, err := rdb.Get(context.Background(), state).Result()
+	token, err := authDB.seleteTokenByState(state)
 	if err != nil {
-		slog.Error("Error getting verifier", "rdb.Get", err)
+		slog.Error("Error getting token by state", "seleteTokenByState", err)
+		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
+	}
+	expires, err := time.Parse(time.RFC3339, token.Expires)
+	if err != nil || time.Now().After(expires) {
+		slog.Error("Token expired", "token.Expires", token.Expires)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
 	// get oauth config
 	config, err := OAuthConfig.getOAuthConfig(provider)
 	if err != nil {
-		slog.Error("Error getting provider", "configProvider.getOAuthConfig", err)
+		slog.Error("Error getting provider", "getOAuthConfig", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
 	// get oauth token
-	oauthToken, err := config.Exchange(context.Background(), code, oauth2.VerifierOption(verifier))
+	oauthToken, err := config.Exchange(context.Background(), code, oauth2.VerifierOption(token.Verifier))
 	if err != nil {
 		slog.Error("Error exchanging code for token", "config.Exchange", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
@@ -83,7 +82,6 @@ func OauthCallback(c echo.Context, storage system.Storage) error {
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
-	var authDB = NewAuthDB(&storage)
 	// get user, create if not exists
 	user, err := authDB.selectUserByEmailAndSub(userInfo.email, userInfo.sub)
 	if err != nil {
@@ -95,14 +93,9 @@ func OauthCallback(c echo.Context, storage system.Storage) error {
 	}
 
 	// create oauth token with a 10 seconds expiration
-	tokenId, err := uuid.NewV7()
+	token, err = authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), user.Id, "", "")
 	if err != nil {
-		slog.Error("Error creating token id", "uuid.NewV7", err)
-		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
-	}
-	err = rdb.Set(context.Background(), tokenId.String(), user.Id, 10*time.Second).Err()
-	if err != nil {
-		slog.Error("Error setting token id", "rdb.Set", err)
+		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
@@ -120,5 +113,5 @@ func OauthCallback(c echo.Context, storage system.Storage) error {
 	// c.SetCookie(cookie)
 
 	// redirect to home page
-	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/token/"+tokenId.String())
+	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/token/"+token.Id)
 }

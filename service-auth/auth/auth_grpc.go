@@ -7,8 +7,6 @@ import (
 	"service-auth/system"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/redis/go-redis/v9"
 	"github.com/stripe/stripe-go/v76"
 	portal_session "github.com/stripe/stripe-go/v76/billingportal/session"
 	checkout_session "github.com/stripe/stripe-go/v76/checkout/session"
@@ -33,38 +31,53 @@ func Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error)
 		slog.Error("Error extracting token", "system.ExtractToken", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
-	// get oauth token from redis
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     system.REDIS_URL,
-		Password: system.REDIS_PASSWORD,
-	})
-	userId, err := rdb.Get(context.Background(), claims.Id).Result()
+	// get token
+	token, err := authDB.selectTokenById(claims.Id)
 	if err != nil {
-		slog.Error("Error getting token from redis", "rdb.Get", err)
+		slog.Error("Error selecting token by id", "authDB.selectTokenById", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
+	expires, err := time.Parse(time.RFC3339, token.Expires)
+	if err != nil || time.Now().After(expires) {
+		slog.Error("Token expired", "token.Expires", token.Expires)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
+	}
+
 	// get user from database
-	user, err := authDB.selectUserById(userId)
+	user, err := authDB.selectUserById(token.UserId)
 	if err != nil {
 		slog.Error("Error selecting user by id", "authDB.selectUserById", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 	// create new phantom token with a 7 day expiration
-	tokenId, err := uuid.NewV7()
-	if err != nil {
-		slog.Error("Error creating new token", "uuid.NewV7", err)
-		return nil, status.Error(codes.Internal, "Internal error")
-	}
+	// tokenId, err := uuid.NewV7()
+	// if err != nil {
+	// 	slog.Error("Error creating new token", "uuid.NewV7", err)
+	// 	return nil, status.Error(codes.Internal, "Internal error")
+	// }
+	// go func() {
+	// 	err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
+	// 	if err != nil {
+	// 		slog.Error("Error setting token in redis", "rdb.Set", err)
+	// 	}
+	// }()
+
+	// Update token expiration and user
 	go func() {
-		err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
+		err = authDB.updateToken(claims.Id, time.Now().Add(7*24*time.Hour).Format(time.RFC3339))
 		if err != nil {
-			slog.Error("Error setting token in redis", "rdb.Set", err)
+			slog.Error("Error updating token", "authDB.updateToken", err)
+		}
+		err = authDB.updateUser(user.Id)
+		if err != nil {
+			slog.Error("Error updating user", "authDB.updateUser", err)
 		}
 	}()
+
 	subscribed := checkIfSubscribed(user, authDB)
 	user.SubscriptionActive = subscribed
 	return &pb.AuthResponse{
-		Token: tokenId.String(),
+		Token: claims.Id,
 		User:  user,
 	}, nil
 }

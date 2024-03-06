@@ -2,7 +2,7 @@ package system
 
 import (
 	"database/sql"
-	// _ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
@@ -12,6 +12,7 @@ type Storage struct {
 
 func NewStorage() (Storage, error) {
 	conn, err := sql.Open("libsql", TURSO_URL)
+	// conn, err := sql.Open("sqlite3", "file::memory:?cache=shared&mode=rwc&_journal_mode=WAL&busy_timeout=10000")
 	if err != nil {
 		return Storage{}, err
 	}

@@ -85,11 +85,9 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	e.GET("/oauth-login/:provider", func(c echo.Context) error {
-		defer system.Perf("oauth-login", time.Now())
-		return auth.OauthLogin(c)
+		return auth.OauthLogin(c, storage)
 	})
 	e.GET("/oauth-callback/:provider", func(c echo.Context) error {
-		defer system.Perf("oauth-callback", time.Now())
 		return auth.OauthCallback(c, storage)
 	})
 	go func() {
@@ -102,6 +100,18 @@ func main() {
 		if err != nil {
 			slog.Error("Error serving HTTP", "e.Start", err)
 			panic(err)
+		}
+	}()
+
+	// Run scheduler
+	go func() {
+		for {
+			authDb := auth.NewAuthDB(&storage)
+			err := authDb.CleanTokens()
+			if err != nil {
+				slog.Error("Error cleaning up tokens", "authDb.cleanupTokens", err)
+			}
+			time.Sleep(24 * time.Hour)
 		}
 	}()
 
