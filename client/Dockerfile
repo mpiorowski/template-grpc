@@ -5,6 +5,7 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
+COPY .npmrc /client/.npmrc
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
@@ -29,6 +30,8 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
+COPY .npmrc /client/.npmrc
+
 RUN npm install
 
 RUN --mount=type=secret,id=JWT_SECRET echo "JWT_SECRET=$(cat /run/secrets/JWT_SECRET)" >> .env
@@ -55,6 +58,7 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
+COPY .npmrc /client/.npmrc
 RUN npm install --omit=dev
 
 COPY --from=build /client/build /client/build
