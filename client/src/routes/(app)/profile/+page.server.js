@@ -42,7 +42,9 @@ export const actions = {
             city: getValue(form, "city"),
             state: getValue(form, "state"),
             zip: getValue(form, "zip"),
-            email_notifications: getAllValues(form, "email_notifications").join(","),
+            email_notifications: getAllValues(form, "email_notifications").join(
+                ",",
+            ),
             push_notification: getValue(form, "push_notification"),
             resume: "",
             cover: "",
@@ -56,7 +58,7 @@ export const actions = {
             profileService.UpdateProfile(data, metadata, grpcSafe(r)),
         );
         if (!profile.success) {
-            return fail(500, { error: profile.error });
+            return fail(500, { error: profile.error, fields: profile.fields });
         }
         end();
         return { profile: profile.data };

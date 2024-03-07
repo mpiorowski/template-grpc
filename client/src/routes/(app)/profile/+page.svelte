@@ -12,14 +12,37 @@
     import Tooltip from "$lib/ui/Tooltip.svelte";
     import SelectNative from "$lib/form/SelectNative.svelte";
     import { enhance } from "$app/forms";
-    import { toast } from "$lib/ui/toast.store";
+    import { showToast, toast } from "$lib/ui/toast.store";
+    import { extractError } from "$lib/errors";
+    import { generateId } from "$lib/helpers";
 
     /** @type {import("./$types").PageData} */
     export let data;
     /** @type {import("./$types").ActionData} */
     export let form;
-    $: if (form?.error) {
+    $: if (form?.error && !form?.fields) {
         toast.error("Error", form.error);
+    }
+    $: if (form?.fields) {
+        const errors = form.fields;
+        const firstError = errors[0]?.field.toLowerCase();
+        showToast({
+            id: generateId(),
+            title: "Validation failed",
+            description: `Found ${Object.keys(errors).length} errors`,
+            type: "error",
+            duration: 6000,
+            action: {
+                label: "Go to first error",
+                onClick: () => {
+                    /** @type {HTMLInputElement | null} */
+                    const input = document.querySelector(
+                        `[name="${firstError}"]`,
+                    );
+                    input?.focus();
+                },
+            },
+        });
     }
 
     export const countries = /** @type {const} */ ([
@@ -126,11 +149,7 @@
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
                 <div class="sm:col-span-4">
-                    <Switch
-                        name="active"
-                        label="Active"
-                        bind:value={active}
-                    />
+                    <Switch name="active" label="Active" bind:value={active} />
                 </div>
                 <div class="sm:col-span-4">
                     <Input
@@ -138,6 +157,7 @@
                         label="Username"
                         autocomplete="username"
                         bind:value={data.profile.username}
+                        error={extractError(form?.fields, "username")}
                     />
                 </div>
 
@@ -148,6 +168,7 @@
                         bind:value={data.profile.about}
                         rows={3}
                         helper="Write a few sentences about yourself."
+                        error={extractError(form?.fields, "about")}
                     />
                 </div>
 
