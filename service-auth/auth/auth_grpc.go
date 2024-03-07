@@ -49,18 +49,6 @@ func Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error)
 		slog.Error("Error selecting user by id", "authDB.selectUserById", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
-	// create new phantom token with a 7 day expiration
-	// tokenId, err := uuid.NewV7()
-	// if err != nil {
-	// 	slog.Error("Error creating new token", "uuid.NewV7", err)
-	// 	return nil, status.Error(codes.Internal, "Internal error")
-	// }
-	// go func() {
-	// 	err = rdb.Set(context.Background(), tokenId.String(), userId, 7*24*time.Hour).Err()
-	// 	if err != nil {
-	// 		slog.Error("Error setting token in redis", "rdb.Set", err)
-	// 	}
-	// }()
 
 	// Update token expiration and user
 	go func() {

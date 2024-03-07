@@ -22,3 +22,11 @@ func getUser(ctx context.Context, storage system.Storage) (*pb.User, error) {
 	return user, nil
 }
 
+func CleanTokens(ctx context.Context, storage system.Storage) error {
+	authDb := NewAuthDB(&storage)
+	err := authDb.CleanTokens()
+	if err != nil {
+		return fmt.Errorf("cleanTokens: %w", err)
+	}
+	return nil
+}

@@ -99,19 +99,6 @@ func OauthCallback(c echo.Context, storage system.Storage) error {
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 
-	// set cookie
-	// cookie := &http.Cookie{}
-	// cookie.Domain = system.COOKIE_DOMAIN
-	// cookie.Name = "token"
-	// cookie.Value = tokenId.String()
-	// cookie.Path = "/"
-	// cookie.Secure = true
-	// cookie.SameSite = http.SameSiteLaxMode
-	// cookie.HttpOnly = true
-	// // 7 days
-	// cookie.MaxAge = 7 * 24 * 60 * 60
-	// c.SetCookie(cookie)
-
 	// redirect to home page
 	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/token/"+token.Id)
 }

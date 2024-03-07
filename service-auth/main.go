@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log/slog"
@@ -29,7 +30,7 @@ func main() {
 	// Connect to the database
 	storage, err := system.NewStorage()
 	if err != nil {
-		slog.Error("Error opening database", "db.Connect", err)
+		slog.Error("Error opening database", "system.NewStorage", err)
 		panic(err)
 	}
 	slog.Info("Database connected")
@@ -37,7 +38,7 @@ func main() {
 	// Run migrations
 	err = storage.Migrations()
 	if err != nil {
-		slog.Error("Error running migrations", "db.Migrations", err)
+		slog.Error("Error running migrations", "storage.Migrations", err)
 		panic(err)
 	}
 	slog.Info("Migrations completed")
@@ -79,7 +80,7 @@ func main() {
 		id := 0
 		err := storage.Conn.QueryRow("SELECT 1").Scan(&id)
 		if err != nil {
-			slog.Error("Error pinging database", "Db.QueryRow", err)
+			slog.Error("Error pinging database", "storage.Conn.QueryRow", err)
 			return c.String(http.StatusInternalServerError, "Error pinging database")
 		}
 		return c.String(http.StatusOK, "Hello, World!")
@@ -103,17 +104,8 @@ func main() {
 		}
 	}()
 
-	// Run scheduler
-	go func() {
-		for {
-			authDb := auth.NewAuthDB(&storage)
-			err := authDb.CleanTokens()
-			if err != nil {
-				slog.Error("Error cleaning up tokens", "authDb.cleanupTokens", err)
-			}
-			time.Sleep(24 * time.Hour)
-		}
-	}()
+	// Run the system tasks
+	go system.StartTask(context.Background(), auth.CleanTokens, storage, time.Hour*24, "auth.CleanTokens")
 
 	select {}
 }
