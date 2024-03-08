@@ -9,3 +9,5 @@ on:
 jobs:
   lint-client:
     uses: ./.github/workflows/lint-client.yml
+    secrets:
+      GSAP_TOKEN: ${{ secrets.GSAP_TOKEN }}
