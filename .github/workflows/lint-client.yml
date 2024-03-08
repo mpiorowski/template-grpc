@@ -4,7 +4,6 @@ on:
     secrets:
       GSAP_TOKEN:
         required: true
-        type: string
 
 env:
   GSAP_TOKEN: ${{ secrets.GSAP_TOKEN }}
