@@ -2,6 +2,9 @@ name: Lint Client
 on:
   workflow_call:
 
+env:
+  GSAP_TOKEN: ${{ secrets.GSAP_TOKEN }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest

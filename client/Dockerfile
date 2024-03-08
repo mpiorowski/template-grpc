@@ -11,6 +11,8 @@ ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
 ARG JWT_SECRET
 RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
+ARG GSAP_TOKEN
+RUN echo "GSAP_TOKEN=${GSAP_TOKEN}" >> .env
 ARG PUBLIC_DIRECTUS_URL 
 RUN echo "PUBLIC_DIRECTUS_URL=${PUBLIC_DIRECTUS_URL}" >> .env
 ARG PUBLIC_AUTH_URL 
@@ -35,9 +37,12 @@ COPY .npmrc /client/.npmrc
 RUN npm install
 
 RUN --mount=type=secret,id=JWT_SECRET echo "JWT_SECRET=$(cat /run/secrets/JWT_SECRET)" >> .env
+RUN --mount=type=secret,id=GSAP_TOKEN echo "GSAP_TOKEN=$(cat /run/secrets/GSAP_TOKEN)" >> .env
 
 ARG TARGET
 RUN echo "TARGET=${TARGET}" >> .env
+# ARG GSAP_TOKEN
+# RUN echo "GSAP_TOKEN=${GSAP_TOKEN}" >> .env
 # ARG JWT_SECRET
 # RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
 ARG PUBLIC_DIRECTUS_URL 
