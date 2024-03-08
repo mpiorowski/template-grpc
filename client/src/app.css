@@ -46,11 +46,15 @@
 }
 
 html {
-    @apply h-full antialiased;
+  scroll-behavior: unset !important;
+}
+
+html {
+    @apply h-full;
 }
 
 body {
-    @apply h-full font-poppins text-gray-50;
+    @apply h-full;
 }
 
 h1 {
@@ -75,4 +79,3 @@ h4 {
 .scroll {
     overflow-y: scroll;
 }
-

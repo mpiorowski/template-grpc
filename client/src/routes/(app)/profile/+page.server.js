@@ -1,8 +1,7 @@
 import { getAllValues, getValue } from "$lib/helpers";
-import { profileService } from "$lib/server/grpc";
-import { logger, perf } from "$lib/server/logger";
+import { grpcSafe, profileService } from "$lib/server/grpc";
+import { perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
-import { grpcSafe } from "$lib/server/safe";
 import { error, fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
@@ -17,7 +16,6 @@ export async function load({ locals }) {
         throw error(500, profile.error);
     }
     end();
-    logger.info(profile.data);
     return {
         profile: profile.data,
     };
@@ -43,7 +41,9 @@ export const actions = {
             city: getValue(form, "city"),
             state: getValue(form, "state"),
             zip: getValue(form, "zip"),
-            email_notifications: getAllValues(form, "email_notifications").join(","),
+            email_notifications: getAllValues(form, "email_notifications").join(
+                ",",
+            ),
             push_notification: getValue(form, "push_notification"),
             resume: "",
             cover: "",
@@ -57,7 +57,7 @@ export const actions = {
             profileService.UpdateProfile(data, metadata, grpcSafe(r)),
         );
         if (!profile.success) {
-            return fail(500, { error: profile.error });
+            return fail(500, { error: profile.error, fields: profile.fields });
         }
         end();
         return { profile: profile.data };

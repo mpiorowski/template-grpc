@@ -1,6 +1,5 @@
 import { UserRole } from "$lib/proto/proto/UserRole";
-import { grpcSafe } from "$lib/server/safe";
-import { authService } from "$lib/server/grpc";
+import { authService, grpcSafe } from "$lib/server/grpc";
 import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { redirect } from "@sveltejs/kit";
@@ -9,20 +8,6 @@ import { building } from "$app/environment";
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
     if (building) {
-        event.locals.user = {
-            id: "",
-            created: "",
-            updated: "",
-            deleted: "",
-            email: "",
-            avatar: "",
-            role: UserRole.ROLE_UNSET,
-            sub: "",
-            subscription_id: "",
-            subscription_end: "",
-            subscription_check: "",
-            subscription_active: false,
-        };
         return await resolve(event);
     }
 
@@ -63,7 +48,7 @@ export async function handle({ event, resolve }) {
             path: "/",
             maxAge: 10,
         });
-        throw redirect(302, "/articles");
+        throw redirect(302, "/profile");
     }
 
     token = event.cookies.get("token") ?? "";
@@ -92,10 +77,10 @@ export async function handle({ event, resolve }) {
 
     end();
     const response = await resolve(event);
-    // max age is 30 days
+    // max age is 7 days
     response.headers.append(
         "set-cookie",
-        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=2592000; Path=/;`,
+        `token=${auth.data.token}; HttpOnly; SameSite=Lax; Secure; Max-Age=604800; Path=/`,
     );
     return response;
 }

@@ -6,10 +6,6 @@ export type Safe<T> =
     | {
           success: false;
           error: string;
-          fields?: {
-              field: string;
-              tag: string;
-          }[];
       };
 
 export type GrpcSafe<T> =

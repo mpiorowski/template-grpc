@@ -31,7 +31,7 @@ func (s Storage) Migrations() error {
 		return err
 	}
 	// Index user_id
-	_, err = s.Conn.Exec(`create index if not exists profile_user_id on profile (user_id)`)
+	_, err = s.Conn.Exec(`create index if not exists idx_profiles_user_id on profiles (user_id)`)
 	if err != nil {
 		return err
 	}

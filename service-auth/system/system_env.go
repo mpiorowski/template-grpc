@@ -22,8 +22,6 @@ var (
 	COOKIE_DOMAIN        = mustHaveEnv("COOKIE_DOMAIN")
 	CLIENT_URL           = mustHaveEnv("CLIENT_URL")
 	SERVER_HTTP          = mustHaveEnv("SERVER_HTTP")
-	REDIS_URL            = mustHaveEnv("REDIS_URL")
-	REDIS_PASSWORD       = mustHaveEnv("REDIS_PASSWORD")
 	STRIPE_API_KEY       = mustHaveEnv("STRIPE_API_KEY")
 	STRIPE_PRICE_ID      = mustHaveEnv("STRIPE_PRICE_ID")
 	GOOGLE_CLIENT_ID     = mustHaveEnv("GOOGLE_CLIENT_ID")

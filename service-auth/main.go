@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log/slog"
@@ -29,7 +30,7 @@ func main() {
 	// Connect to the database
 	storage, err := system.NewStorage()
 	if err != nil {
-		slog.Error("Error opening database", "db.Connect", err)
+		slog.Error("Error opening database", "system.NewStorage", err)
 		panic(err)
 	}
 	slog.Info("Database connected")
@@ -37,7 +38,7 @@ func main() {
 	// Run migrations
 	err = storage.Migrations()
 	if err != nil {
-		slog.Error("Error running migrations", "db.Migrations", err)
+		slog.Error("Error running migrations", "storage.Migrations", err)
 		panic(err)
 	}
 	slog.Info("Migrations completed")
@@ -79,17 +80,15 @@ func main() {
 		id := 0
 		err := storage.Conn.QueryRow("SELECT 1").Scan(&id)
 		if err != nil {
-			slog.Error("Error pinging database", "Db.QueryRow", err)
+			slog.Error("Error pinging database", "storage.Conn.QueryRow", err)
 			return c.String(http.StatusInternalServerError, "Error pinging database")
 		}
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	e.GET("/oauth-login/:provider", func(c echo.Context) error {
-		defer system.Perf("oauth-login", time.Now())
-		return auth.OauthLogin(c)
+		return auth.OauthLogin(c, storage)
 	})
 	e.GET("/oauth-callback/:provider", func(c echo.Context) error {
-		defer system.Perf("oauth-callback", time.Now())
 		return auth.OauthCallback(c, storage)
 	})
 	go func() {
@@ -104,6 +103,9 @@ func main() {
 			panic(err)
 		}
 	}()
+
+	// Run the system tasks
+	go system.StartTask(context.Background(), auth.CleanTokens, storage, time.Hour*24, "auth.CleanTokens")
 
 	select {}
 }

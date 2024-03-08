@@ -21,24 +21,6 @@ export function checkElement(element) {
 }
 
 /**
- * Extract errors from a fields object
- * @param {Record<string, string[]> | undefined} fields
- * @param {string} field
- * @returns {string[]}
- */
-export function getError(fields, field) {
-    if (!fields) {
-        return [];
-    }
-    for (const [key, value] of Object.entries(fields)) {
-        if (key === field) {
-            return value;
-        }
-    }
-    return [];
-}
-
-/**
  * Get the string from a form field
  * @param {FormData} form
  * @param {string} key

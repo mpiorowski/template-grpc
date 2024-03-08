@@ -25,15 +25,10 @@ func (s Storage) Migrations() error {
 	_, err = s.Conn.Exec(`
         create table if not exists tokens (
             id text primary key not null,
-            created datetime not null default current_timestamp,
-            updated datetime not null default current_timestamp,
-            deleted datetime not null default '2400-01-01 00:00:00',
+            expires datetime not null,
             user_id text not null,
-            provider text not null,
-            access_token text not null,
-            refresh_token text not null,
-            token_type text not null,
-            expires timestamp not null
+            state text not null,
+            verifier text not null
         )`)
 	if err != nil {
 		return err
