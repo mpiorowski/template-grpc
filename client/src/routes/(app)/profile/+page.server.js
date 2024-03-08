@@ -1,8 +1,7 @@
 import { getAllValues, getValue } from "$lib/helpers";
-import { profileService } from "$lib/server/grpc";
+import { grpcSafe, profileService } from "$lib/server/grpc";
 import { perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
-import { grpcSafe } from "$lib/server/safe";
 import { error, fail } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */

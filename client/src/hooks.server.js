@@ -1,6 +1,5 @@
 import { UserRole } from "$lib/proto/proto/UserRole";
-import { grpcSafe } from "$lib/server/safe";
-import { authService } from "$lib/server/grpc";
+import { authService, grpcSafe } from "$lib/server/grpc";
 import { logger, perf } from "$lib/server/logger";
 import { createMetadata } from "$lib/server/metadata";
 import { redirect } from "@sveltejs/kit";
