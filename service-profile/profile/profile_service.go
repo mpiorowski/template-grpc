@@ -16,17 +16,15 @@ type ProfileService interface {
 	UpdateProfile(ctx context.Context, profile *pb.Profile) (*pb.Profile, error)
 }
 
-type ProfileServiceImpl struct {
+type profileService struct {
 	ProfileDB
 }
 
-var _ ProfileService = ProfileServiceImpl{}
-
 func NewProfileService(db ProfileDB) ProfileService {
-	return ProfileServiceImpl{db}
+	return &profileService{db}
 }
 
-func (s ProfileServiceImpl) GetProfile(ctx context.Context) (*pb.Profile, error) {
+func (s *profileService) GetProfile(ctx context.Context) (*pb.Profile, error) {
 	defer system.Perf("get_profile", time.Now())
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
@@ -45,7 +43,7 @@ func (s ProfileServiceImpl) GetProfile(ctx context.Context) (*pb.Profile, error)
 	return profile, nil
 }
 
-func (s ProfileServiceImpl) UpdateProfile(ctx context.Context, profile *pb.Profile) (*pb.Profile, error) {
+func (s *profileService) UpdateProfile(ctx context.Context, profile *pb.Profile) (*pb.Profile, error) {
 	defer system.Perf("update_profile", time.Now())
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
@@ -53,7 +51,7 @@ func (s ProfileServiceImpl) UpdateProfile(ctx context.Context, profile *pb.Profi
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 
-	validationErrors := profileValidation(profile)
+	validationErrors := validateProfile(profile)
 	if len(validationErrors) > 0 {
 		return nil, system.CreateErrors(validationErrors)
 	}

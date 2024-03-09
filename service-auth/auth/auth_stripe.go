@@ -13,7 +13,7 @@ import (
 	"service-auth/system"
 )
 
-func checkIfSubscribed(user *pb.User, authDB AuthDBProvider) bool {
+func checkIfSubscribed(user *pb.User, authDB AuthDB) bool {
 	defer system.Perf("check_if_subscribed", time.Now())
 	if user.SubscriptionId == "" {
 		return false
@@ -55,7 +55,7 @@ func checkIfSubscribed(user *pb.User, authDB AuthDBProvider) bool {
 	return false
 }
 
-func createStripeUser(userId string, email string, authDB AuthDBProvider) (string, error) {
+func createStripeUser(userId string, email string, authDB AuthDB) (string, error) {
 	stripe.Key = system.STRIPE_API_KEY
 
 	params := &stripe.CustomerParams{

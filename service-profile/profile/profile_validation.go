@@ -5,7 +5,7 @@ import (
 	"service-profile/system"
 )
 
-func profileValidation(profile *pb.Profile) []system.ValidationError {
+func validateProfile(profile *pb.Profile) []system.ValidationError {
 	var errors []system.ValidationError
 	if profile.Username == "" {
 		errors = append(errors, system.ValidationError{Field: "Username", Tag: "required"})

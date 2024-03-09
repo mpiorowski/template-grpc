@@ -28,7 +28,7 @@ func clearUsers(storage *system.Storage) {
 func TestInsertUsers(t *testing.T) {
 	storage := system.NewMemoryStorage()
 	clearUsers(&storage)
-	var db = newAuthDB(&storage)
+	var db = NewAuthDB(&storage)
 
 	// Test case 1: Insert users
 	for _, user := range users {
@@ -73,7 +73,7 @@ func TestInsertUsers(t *testing.T) {
 
 func TestSelectUsers(t *testing.T) {
 	storage := system.NewMemoryStorage()
-	var db = newAuthDB(&storage)
+	var db = NewAuthDB(&storage)
 	clearUsers(&storage)
 	// Test case 1: Select users
 	for _, user := range users {

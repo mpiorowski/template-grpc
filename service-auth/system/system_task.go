@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func StartTask(ctx context.Context, task func(ctx context.Context, storage Storage) error, storage Storage, interval time.Duration, name string) {
+func StartTask(ctx context.Context, task func(ctx context.Context) error, interval time.Duration, name string) {
 	slog.Info("Starting task", "name", name, "interval", interval)
 
 	t := time.NewTicker(interval)
@@ -20,7 +20,7 @@ func StartTask(ctx context.Context, task func(ctx context.Context, storage Stora
 		case <-t.C:
 			go func() {
 				slog.Info("Running task", "name", name)
-				err := task(ctx, storage)
+				err := task(ctx)
 				if err != nil {
 					slog.Error("Error in task", "name", name, "error", err)
 				}

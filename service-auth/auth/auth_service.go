@@ -20,21 +20,39 @@ import (
 )
 
 type AuthService interface {
+	// Helper
+	GetUser(ctx context.Context) (*pb.User, error)
 	// gRPC
-	Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error)
-	CreateStripeCheckout(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error)
-	CreateStripePortal(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error)
+	Auth(ctx context.Context) (*pb.AuthResponse, error)
+	CreateStripeCheckout(ctx context.Context) (*pb.StripeUrlResponse, error)
+	CreateStripePortal(ctx context.Context) (*pb.StripeUrlResponse, error)
 	// HTTP
-	OauthLogin(c echo.Context, storage system.Storage) error
-	OauthCallback(c echo.Context, storage system.Storage) error
+	OauthLogin(c echo.Context) error
+	OauthCallback(c echo.Context) error
 	// Task
-	CleanTokens(ctx context.Context, storage system.Storage) error
+	CleanTokens(ctx context.Context) error
 }
 
-type authService struct{}
+type authService struct {
+	AuthDB
+}
 
-func NewAuthService() AuthService {
-	return &authService{}
+func NewAuthService(authDB AuthDB) AuthService {
+	return &authService{authDB}
+}
+
+func (a *authService) GetUser(ctx context.Context) (*pb.User, error) {
+	claims, err := system.ExtractToken(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("extractToken: %w", err)
+	}
+	user, err := a.selectUserById(claims.Id)
+	if err != nil {
+		return nil, fmt.Errorf("selectUserById: %w", err)
+	}
+	subscribed := checkIfSubscribed(user, a.AuthDB)
+	user.SubscriptionActive = subscribed
+	return user, nil
 }
 
 /**
@@ -46,16 +64,15 @@ func NewAuthService() AuthService {
  * 6. Get user from database
  * 7. Return user and new phantom token
  */
-func (a *authService) Auth(ctx context.Context, storage system.Storage) (*pb.AuthResponse, error) {
+func (a *authService) Auth(ctx context.Context) (*pb.AuthResponse, error) {
 	defer system.Perf("auth", time.Now())
-	var authDB = newAuthDB(&storage)
 	claims, err := system.ExtractToken(ctx)
 	if err != nil {
 		slog.Error("Error extracting token", "system.ExtractToken", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 	// get token
-	token, err := authDB.selectTokenById(claims.Id)
+	token, err := a.selectTokenById(claims.Id)
 	if err != nil {
 		slog.Error("Error selecting token by id", "authDB.selectTokenById", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
@@ -67,7 +84,7 @@ func (a *authService) Auth(ctx context.Context, storage system.Storage) (*pb.Aut
 	}
 
 	// get user from database
-	user, err := authDB.selectUserById(token.UserId)
+	user, err := a.selectUserById(token.UserId)
 	if err != nil {
 		slog.Error("Error selecting user by id", "authDB.selectUserById", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
@@ -75,17 +92,17 @@ func (a *authService) Auth(ctx context.Context, storage system.Storage) (*pb.Aut
 
 	// Update token expiration and user
 	go func() {
-		err = authDB.updateToken(claims.Id, time.Now().Add(7*24*time.Hour).Format(time.RFC3339))
+		err = a.updateToken(claims.Id, time.Now().Add(7*24*time.Hour).Format(time.RFC3339))
 		if err != nil {
 			slog.Error("Error updating token", "authDB.updateToken", err)
 		}
-		err = authDB.updateUser(user.Id)
+		err = a.updateUser(user.Id)
 		if err != nil {
 			slog.Error("Error updating user", "authDB.updateUser", err)
 		}
 	}()
 
-	subscribed := checkIfSubscribed(user, authDB)
+	subscribed := checkIfSubscribed(user, a.AuthDB)
 	user.SubscriptionActive = subscribed
 	return &pb.AuthResponse{
 		Token: claims.Id,
@@ -93,19 +110,18 @@ func (a *authService) Auth(ctx context.Context, storage system.Storage) (*pb.Aut
 	}, nil
 }
 
-func (a *authService) CreateStripeCheckout(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error) {
-	defer system.Perf("CreateStripeCheckout", time.Now())
-	user, err := getUser(ctx, storage)
+func (a *authService) CreateStripeCheckout(ctx context.Context) (*pb.StripeUrlResponse, error) {
+	defer system.Perf("create_stripe_checkout", time.Now())
+	user, err := a.GetUser(ctx)
 	if err != nil {
 		slog.Error("Error authorizing user", "auth.GetUser", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
 	}
 
-	var authDB = newAuthDB(&storage)
 	customerId := user.SubscriptionId
 	if customerId == "" {
 		var err error
-		customerId, err = createStripeUser(user.Id, user.Email, authDB)
+		customerId, err = createStripeUser(user.Id, user.Email, a.AuthDB)
 		if err != nil {
 			slog.Error("Error creating stripe user", "createStripeUser", err)
 			return nil, status.Error(codes.Internal, "Internal error")
@@ -136,7 +152,7 @@ func (a *authService) CreateStripeCheckout(ctx context.Context, storage system.S
 		return nil, status.Error(codes.Internal, "Internal error")
 	}
 
-	err = authDB.updateSubscriptionCheck(user.Id, "1970-01-01T00:00:00Z")
+	err = a.updateSubscriptionCheck(user.Id, "1970-01-01T00:00:00Z")
 	if err != nil {
 		slog.Error("Error updating subscription check date", "updateSubscriptionCheck", err)
 	}
@@ -145,9 +161,9 @@ func (a *authService) CreateStripeCheckout(ctx context.Context, storage system.S
 	}, nil
 }
 
-func (a *authService) CreateStripePortal(ctx context.Context, storage system.Storage) (*pb.StripeUrlResponse, error) {
-	defer system.Perf("CreateStripePortal", time.Now())
-	user, err := getUser(ctx, storage)
+func (a *authService) CreateStripePortal(ctx context.Context) (*pb.StripeUrlResponse, error) {
+	defer system.Perf("create_stripe_portal", time.Now())
+	user, err := a.GetUser(ctx)
 	if err != nil {
 		slog.Error("Error authorizing user", "auth.GetUser", err)
 		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
@@ -169,26 +185,24 @@ func (a *authService) CreateStripePortal(ctx context.Context, storage system.Sto
 	}, nil
 }
 
-func (a *authService) OauthLogin(c echo.Context, storage system.Storage) error {
+func (a *authService) OauthLogin(c echo.Context) error {
 	defer system.Perf("oauth_login", time.Now())
-	var authDB = newAuthDB(&storage)
-    provider := c.Param("provider")
-    var OAuth OAuth
-    if provider == "google" {
-        OAuth = newOAuthGoogle()
-    } else if provider == "github" {
-        OAuth = newOAuthGithub()
-    } else {
-        slog.Error("Invalid provider", "provider", provider)
-        return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
-    }
-
+	provider := c.Param("provider")
+	var OAuth OAuth
+	if provider == "google" {
+		OAuth = newOAuthGoogle()
+	} else if provider == "github" {
+		OAuth = newOAuthGithub()
+	} else {
+		slog.Error("Invalid provider", "provider", provider)
+		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
+	}
 
 	// generate random state and verifier
 	state := system.GenerateRandomState(32)
 	verifier := oauth2.GenerateVerifier()
 	// store state and verifier
-    _, err := authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
+	_, err := a.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
 	if err != nil {
 		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
@@ -198,9 +212,8 @@ func (a *authService) OauthLogin(c echo.Context, storage system.Storage) error {
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
-func (a *authService) OauthCallback(c echo.Context, storage system.Storage) error {
+func (a *authService) OauthCallback(c echo.Context) error {
 	defer system.Perf("oauth_callback", time.Now())
-	var authDB = newAuthDB(&storage)
 
 	provider := c.Param("provider")
 	code := c.QueryParam("code")
@@ -216,7 +229,7 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	}
 
 	// get verifier from state
-	token, err := authDB.seleteTokenByState(state)
+	token, err := a.seleteTokenByState(state)
 	if err != nil {
 		slog.Error("Error getting token by state", "seleteTokenByState", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
@@ -245,9 +258,9 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	}
 
 	// get user, create if not exists
-	user, err := authDB.selectUserByEmailAndSub(userInfo.email, userInfo.sub)
+	user, err := a.selectUserByEmailAndSub(userInfo.email, userInfo.sub)
 	if err != nil {
-		user, err = authDB.insertUser(userInfo.email, userInfo.sub, userInfo.avatar)
+		user, err = a.insertUser(userInfo.email, userInfo.sub, userInfo.avatar)
 		if err != nil {
 			slog.Error("Error inserting user", "insertUser", err)
 			return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=invalid_user")
@@ -255,7 +268,7 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	}
 
 	// create oauth token with a 10 seconds expiration
-	token, err = authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), user.Id, "", "")
+	token, err = a.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), user.Id, "", "")
 	if err != nil {
 		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
@@ -265,9 +278,8 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/token/"+token.Id)
 }
 
-func (a *authService) CleanTokens(ctx context.Context, storage system.Storage) error {
-	authDb := newAuthDB(&storage)
-	err := authDb.CleanTokens()
+func (a *authService) CleanTokens(ctx context.Context) error {
+	err := a.AuthDB.CleanTokens()
 	if err != nil {
 		return fmt.Errorf("cleanTokens: %w", err)
 	}

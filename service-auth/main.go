@@ -73,7 +73,8 @@ func main() {
 	}()
 
 	// Run the HTTP server
-	var auth = auth.NewAuthService()
+    var authDb = auth.NewAuthDB(&storage)
+	var auth = auth.NewAuthService(authDb)
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		defer system.Perf("ping", time.Now())
@@ -87,10 +88,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 	e.GET("/oauth-login/:provider", func(c echo.Context) error {
-		return auth.OauthLogin(c, storage)
+		return auth.OauthLogin(c)
 	})
 	e.GET("/oauth-callback/:provider", func(c echo.Context) error {
-		return auth.OauthCallback(c, storage)
+		return auth.OauthCallback(c)
 	})
 	go func() {
 		slog.Info("HTTP server listening on", "port", system.HTTP_PORT)
@@ -106,7 +107,7 @@ func main() {
 	}()
 
 	// Run the system tasks
-	go system.StartTask(context.Background(), auth.CleanTokens, storage, time.Hour*24, "auth.CleanTokens")
+	go system.StartTask(context.Background(), auth.CleanTokens, time.Hour*24, "auth.CleanTokens")
 
 	select {}
 }

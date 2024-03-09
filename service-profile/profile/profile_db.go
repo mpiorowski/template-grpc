@@ -15,12 +15,12 @@ type ProfileDB interface {
 	updateProfile(profile *pb.Profile) (*pb.Profile, error)
 }
 
-type ProfileDBImpl struct {
+type profileDB struct {
 	*system.Storage
 }
 
 func NewProfileDB(s *system.Storage) ProfileDB {
-	return ProfileDBImpl{s}
+	return &profileDB{s}
 }
 
 func dest(profile *pb.Profile) []interface{} {
@@ -49,7 +49,7 @@ func dest(profile *pb.Profile) []interface{} {
 	}
 }
 
-func (db ProfileDBImpl) selectProfileByUserId(userId string) (*pb.Profile, bool, error) {
+func (db *profileDB) selectProfileByUserId(userId string) (*pb.Profile, bool, error) {
 	row := db.Conn.QueryRow("select * from profiles where user_id = ?", userId)
 	var profile pb.Profile
 	err := row.Scan(dest(&profile)...)
@@ -62,7 +62,7 @@ func (db ProfileDBImpl) selectProfileByUserId(userId string) (*pb.Profile, bool,
 	return &profile, true, nil
 }
 
-func (db ProfileDBImpl) insertProfile(profile *pb.Profile) (*pb.Profile, error) {
+func (db *profileDB) insertProfile(profile *pb.Profile) (*pb.Profile, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, fmt.Errorf("uuid.NewV7: %w", err)
@@ -88,7 +88,7 @@ func (db ProfileDBImpl) insertProfile(profile *pb.Profile) (*pb.Profile, error) 
         position,
         skills
     ) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) returning *`,
-        id.String(),
+		id.String(),
 		profile.UserId,
 		profile.Active,
 		profile.Username,
@@ -115,7 +115,7 @@ func (db ProfileDBImpl) insertProfile(profile *pb.Profile) (*pb.Profile, error) 
 	return profile, nil
 }
 
-func (db ProfileDBImpl) updateProfile(profile *pb.Profile) (*pb.Profile, error) {
+func (db *profileDB) updateProfile(profile *pb.Profile) (*pb.Profile, error) {
 	row := db.Conn.QueryRow(`update profiles set
         active = ?,
         username = ?,
@@ -151,7 +151,7 @@ func (db ProfileDBImpl) updateProfile(profile *pb.Profile) (*pb.Profile, error) 
 		profile.Resume,
 		profile.Cover,
 		profile.Position,
-        profile.Skills,
+		profile.Skills,
 		profile.Id,
 		profile.UserId,
 	)

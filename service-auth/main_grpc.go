@@ -8,16 +8,19 @@ import (
 )
 
 func (s *server) Auth(ctx context.Context, in *pb.Empty) (*pb.AuthResponse, error) {
-	var auth = auth.NewAuthService()
-	return auth.Auth(ctx, s.storage)
+    var authDb = auth.NewAuthDB(&s.storage)
+	var auth = auth.NewAuthService(authDb)
+	return auth.Auth(ctx)
 }
 
 func (s *server) CreateStripeCheckout(ctx context.Context, in *pb.Empty) (*pb.StripeUrlResponse, error) {
-	var auth = auth.NewAuthService()
-	return auth.CreateStripeCheckout(ctx, s.storage)
+    var authDb = auth.NewAuthDB(&s.storage)
+	var auth = auth.NewAuthService(authDb)
+	return auth.CreateStripeCheckout(ctx)
 }
 
 func (s *server) CreateStripePortal(ctx context.Context, in *pb.Empty) (*pb.StripeUrlResponse, error) {
-	var auth = auth.NewAuthService()
-	return auth.CreateStripePortal(ctx, s.storage)
+    var authDb = auth.NewAuthDB(&s.storage)
+	var auth = auth.NewAuthService(authDb)
+	return auth.CreateStripePortal(ctx)
 }

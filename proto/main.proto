@@ -30,7 +30,6 @@ message StripeUrlResponse {
 }
 
 service AuthService {
-    rpc CreateUser(Empty) returns (Id) {}
     rpc Auth(Empty) returns (AuthResponse) {}
 
     rpc CreateStripeCheckout(Empty) returns (StripeUrlResponse) {}

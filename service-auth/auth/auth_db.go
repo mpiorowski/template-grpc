@@ -16,7 +16,7 @@ type Token struct {
 	Verifier string
 }
 
-type AuthDBProvider interface {
+type AuthDB interface {
 	selectTokenById(id string) (*Token, error)
 	seleteTokenByState(state string) (*Token, error)
 	insertToken(expires string, userId string, state string, verifier string) (*Token, error)
@@ -31,12 +31,12 @@ type AuthDBProvider interface {
 	updateSubscriptionEnd(userId string, subscriptionEnd string) error
 }
 
-type AuthDBImpl struct {
+type authDB struct {
 	*system.Storage
 }
 
-func newAuthDB(s *system.Storage) AuthDBProvider {
-	return AuthDBImpl{s}
+func NewAuthDB(s *system.Storage) AuthDB {
+	return &authDB{s}
 }
 
 func destT(token *Token) []interface{} {
@@ -65,7 +65,7 @@ func dest(user *pb.User) []interface{} {
 	}
 }
 
-func (db AuthDBImpl) selectTokenById(id string) (*Token, error) {
+func (db *authDB) selectTokenById(id string) (*Token, error) {
 	row := db.Conn.QueryRow("select * from tokens where id = ?", id)
 	var token Token
 	err := row.Scan(destT(&token)...)
@@ -75,7 +75,7 @@ func (db AuthDBImpl) selectTokenById(id string) (*Token, error) {
 	return &token, nil
 }
 
-func (db AuthDBImpl) seleteTokenByState(state string) (*Token, error) {
+func (db *authDB) seleteTokenByState(state string) (*Token, error) {
 	row := db.Conn.QueryRow("select * from tokens where state = ?", state)
 	var token Token
 	err := row.Scan(destT(&token)...)
@@ -85,7 +85,7 @@ func (db AuthDBImpl) seleteTokenByState(state string) (*Token, error) {
 	return &token, nil
 }
 
-func (db AuthDBImpl) insertToken(expires string, userId string, state string, verifier string) (*Token, error) {
+func (db *authDB) insertToken(expires string, userId string, state string, verifier string) (*Token, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (db AuthDBImpl) insertToken(expires string, userId string, state string, ve
 	return &token, nil
 }
 
-func (db AuthDBImpl) updateToken(id string, expires string) error {
+func (db *authDB) updateToken(id string, expires string) error {
 	_, err := db.Conn.Exec("update tokens set expires = ? where id = ?", expires, id)
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func (db AuthDBImpl) updateToken(id string, expires string) error {
 	return nil
 }
 
-func (db AuthDBImpl) CleanTokens() error {
+func (db *authDB) CleanTokens() error {
     _, err := db.Conn.Exec("delete from tokens where expires < current_timestamp")
     if err != nil {
         return err
@@ -116,7 +116,7 @@ func (db AuthDBImpl) CleanTokens() error {
     return nil
 }
 
-func (db AuthDBImpl) selectUserById(id string) (*pb.User, error) {
+func (db *authDB) selectUserById(id string) (*pb.User, error) {
 	row := db.Conn.QueryRow("select * from users where id = ?", id)
 	var user pb.User
 	err := row.Scan(dest(&user)...)
@@ -126,7 +126,7 @@ func (db AuthDBImpl) selectUserById(id string) (*pb.User, error) {
 	return &user, nil
 }
 
-func (db AuthDBImpl) selectUserByEmailAndSub(email string, sub string) (*pb.User, error) {
+func (db *authDB) selectUserByEmailAndSub(email string, sub string) (*pb.User, error) {
 	row := db.Conn.QueryRow("select * from users where email = ? and sub = ?", email, sub)
 	var user pb.User
 	err := row.Scan(dest(&user)...)
@@ -136,7 +136,7 @@ func (db AuthDBImpl) selectUserByEmailAndSub(email string, sub string) (*pb.User
 	return &user, nil
 }
 
-func (db AuthDBImpl) insertUser(email string, sub string, avatar string) (*pb.User, error) {
+func (db *authDB) insertUser(email string, sub string, avatar string) (*pb.User, error) {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return nil, err
@@ -151,7 +151,7 @@ func (db AuthDBImpl) insertUser(email string, sub string, avatar string) (*pb.Us
 	return &user, nil
 }
 
-func (db AuthDBImpl) updateUser(id string) error {
+func (db *authDB) updateUser(id string) error {
 	_, err := db.Conn.Exec("update users set updated = current_timestamp where id = ? returning *", id)
 	if err != nil {
 		return err
@@ -159,7 +159,7 @@ func (db AuthDBImpl) updateUser(id string) error {
 	return nil
 }
 
-func (db AuthDBImpl) updateSubscriptionId(userId string, subscriptionId string) error {
+func (db *authDB) updateSubscriptionId(userId string, subscriptionId string) error {
 	_, err := db.Conn.Exec("update users set subscription_id = ? where id = ?", subscriptionId, userId)
 	if err != nil {
 		return err
@@ -167,7 +167,7 @@ func (db AuthDBImpl) updateSubscriptionId(userId string, subscriptionId string) 
 	return nil
 }
 
-func (db AuthDBImpl) updateSubscriptionCheck(userId string, subscriptionCheck string) error {
+func (db *authDB) updateSubscriptionCheck(userId string, subscriptionCheck string) error {
 	_, err := db.Conn.Exec("update users set subscription_check = ? where id = ?", subscriptionCheck, userId)
 	if err != nil {
 		return err
@@ -175,7 +175,7 @@ func (db AuthDBImpl) updateSubscriptionCheck(userId string, subscriptionCheck st
 	return nil
 }
 
-func (db AuthDBImpl) updateSubscriptionEnd(userId string, subscriptionEnd string) error {
+func (db *authDB) updateSubscriptionEnd(userId string, subscriptionEnd string) error {
 	_, err := db.Conn.Exec("update users set subscription_end = ? where id = ?", subscriptionEnd, userId)
 	if err != nil {
 		return err
