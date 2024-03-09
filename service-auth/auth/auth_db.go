@@ -35,9 +35,7 @@ type AuthDBImpl struct {
 	*system.Storage
 }
 
-var _ AuthDBProvider = AuthDBImpl{}
-
-func NewAuthDB(s *system.Storage) AuthDBProvider {
+func newAuthDB(s *system.Storage) AuthDBProvider {
 	return AuthDBImpl{s}
 }
 

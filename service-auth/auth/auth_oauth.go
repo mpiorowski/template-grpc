@@ -40,7 +40,10 @@ type OAuthConfigProvider interface {
 	getUserInfo(provider string, accessToken string) (*UserInfo, error)
 }
 type OAuthConfigImpl struct {}
-var OAuthConfig OAuthConfigProvider = &OAuthConfigImpl{}
+
+func newOAuthConfig() OAuthConfigProvider {
+    return &OAuthConfigImpl{}
+}
 
 func (o OAuthConfigImpl) getOAuthConfig(provider string) (*oauth2.Config, error) {
 	if provider == "github" {

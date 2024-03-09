@@ -73,6 +73,7 @@ func main() {
 	}()
 
 	// Run the HTTP server
+	var auth = auth.NewAuthService()
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		defer system.Perf("ping", time.Now())

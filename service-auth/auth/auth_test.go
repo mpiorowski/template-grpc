@@ -26,9 +26,9 @@ func clearUsers(storage *system.Storage) {
 }
 
 func TestInsertUsers(t *testing.T) {
-	storage := system.NewTestStorage()
+	storage := system.NewMemoryStorage()
 	clearUsers(&storage)
-	var db = NewAuthDB(&storage)
+	var db = newAuthDB(&storage)
 
 	// Test case 1: Insert users
 	for _, user := range users {
@@ -46,7 +46,7 @@ func TestInsertUsers(t *testing.T) {
 	}
 
 	// Test case 2: Insert duplicate user
-    _, err := db.insertUser(users[0].Email, users[0].Sub, users[0].Avatar)
+	_, err := db.insertUser(users[0].Email, users[0].Sub, users[0].Avatar)
 	if err == nil {
 		t.Error("Duplicate user is inserted")
 	}
@@ -72,8 +72,8 @@ func TestInsertUsers(t *testing.T) {
 }
 
 func TestSelectUsers(t *testing.T) {
-	storage := system.NewTestStorage()
-	var db = NewAuthDB(&storage)
+	storage := system.NewMemoryStorage()
+	var db = newAuthDB(&storage)
 	clearUsers(&storage)
 	// Test case 1: Select users
 	for _, user := range users {
