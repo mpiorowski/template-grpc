@@ -58,7 +58,7 @@ export async function handle({ event, resolve }) {
     }
 
     const metadata = createMetadata(token);
-    /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
+    /** @type {import("$lib/server/safe").Safe<import("$lib/proto/proto/AuthResponse").AuthResponse__Output>} */
     const auth = await new Promise((res) => {
         authService.Auth({}, metadata, grpcSafe(res));
     });

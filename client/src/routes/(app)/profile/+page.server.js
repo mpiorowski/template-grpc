@@ -8,7 +8,7 @@ import { error, fail } from "@sveltejs/kit";
 export async function load({ locals }) {
     const end = perf("load_profile");
     const metadata = createMetadata(locals.user.id);
-    /** @type {import("$lib/server/safe.types").GrpcSafe<import("$lib/proto/proto/Profile").Profile__Output>} */
+    /** @type {import("$lib/server/safe").GrpcSafe<import("$lib/proto/proto/Profile").Profile__Output>} */
     const profile = await new Promise((r) =>
         profileService.GetProfile({}, metadata, grpcSafe(r)),
     );
@@ -52,7 +52,7 @@ export const actions = {
         };
 
         const metadata = createMetadata(locals.user.id);
-        /** @type {import("$lib/server/safe.types").GrpcSafe<import("$lib/proto/proto/Profile").Profile__Output>} */
+        /** @type {import("$lib/server/safe").GrpcSafe<import("$lib/proto/proto/Profile").Profile__Output>} */
         const profile = await new Promise((r) =>
             profileService.UpdateProfile(data, metadata, grpcSafe(r)),
         );

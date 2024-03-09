@@ -28,7 +28,7 @@ export const actions = {
             phone: getValue(form, "phone"),
             message: getValue(form, "message"),
         };
-        /** @type {import("$lib/server/safe.types").Safe<{data: Contact}>} */
+        /** @type {import("$lib/server/safe").Safe<{data: Contact}>} */
         const r = await api(PUBLIC_DIRECTUS_URL + "/items/contact", {
             method: "POST",
             body: data,

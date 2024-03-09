@@ -7,7 +7,7 @@ import { safe } from "./safe";
  *  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
  *  body?: D
  *  }} options
- *  @returns {Promise<import("./safe.types").Safe<T>>}
+ *  @returns {Promise<import("./safe").Safe<T>>}
  *  @template T
  *  @template D = T
  */

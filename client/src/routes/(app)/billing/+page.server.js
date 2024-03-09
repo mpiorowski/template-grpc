@@ -16,7 +16,7 @@ export const actions = {
         const end = perf("create_stripe_checkout");
         const metadata = createMetadata(locals.user.id);
 
-        /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/StripeUrlResponse").StripeUrlResponse__Output>} */
+        /** @type {import("$lib/server/safe").Safe<import("$lib/proto/proto/StripeUrlResponse").StripeUrlResponse__Output>} */
         const s = await new Promise((r) =>
             authService.CreateStripeCheckout({}, metadata, grpcSafe(r)),
         );
@@ -32,7 +32,7 @@ export const actions = {
         const end = perf("create_stripe_portal");
         const metadata = createMetadata(locals.user.id);
 
-        /** @type {import("$lib/server/safe.types").Safe<import("$lib/proto/proto/StripeUrlResponse").StripeUrlResponse__Output>} */
+        /** @type {import("$lib/server/safe").Safe<import("$lib/proto/proto/StripeUrlResponse").StripeUrlResponse__Output>} */
         const s = await new Promise((r) =>
             authService.CreateStripePortal({}, metadata, grpcSafe(r)),
         );

@@ -18,7 +18,7 @@ export const prerender = true;
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
     const end = perf("get_all_articles");
-    /** @type {import("$lib/server/safe.types").Safe<{data: Article[]}>} */
+    /** @type {import("$lib/server/safe").Safe<{data: Article[]}>} */
     const articles = await api(PUBLIC_DIRECTUS_URL + "/items/articles");
     if (!articles.success) {
         logger.error(`Error getting all articles: ${articles.error}`);

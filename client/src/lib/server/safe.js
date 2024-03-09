@@ -1,6 +1,6 @@
 /**
  * @param {Promise<T> | (() => T)} promiseOrFunc
- * @returns {Promise<import("./safe.types").Safe<T>> | import("./safe.types").Safe<T>}
+ * @returns {Promise<import("./safe").Safe<T>> | import("./safe.types").Safe<T>}
  * @template T
  * @public
  */
@@ -13,7 +13,7 @@ export function safe(promiseOrFunc) {
 
 /**
  * @param {Promise<T>} promise
- * @returns {Promise<import("./safe.types").Safe<T>>}
+ * @returns {Promise<import("./safe").Safe<T>>}
  * @template T
  * @private
  */
@@ -31,7 +31,7 @@ async function safeAsync(promise) {
 
 /**
  * @param {() => T} func
- * @returns {import("./safe.types").Safe<T>}
+ * @returns {import("./safe").Safe<T>}
  * @template T
  * @private
  */
