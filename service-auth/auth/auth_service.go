@@ -27,8 +27,8 @@ type AuthService interface {
 	// HTTP
 	OauthLogin(c echo.Context, storage system.Storage) error
 	OauthCallback(c echo.Context, storage system.Storage) error
-    // Task
-    CleanTokens(ctx context.Context, storage system.Storage) error
+	// Task
+	CleanTokens(ctx context.Context, storage system.Storage) error
 }
 
 type authService struct{}
@@ -172,34 +172,48 @@ func (a *authService) CreateStripePortal(ctx context.Context, storage system.Sto
 func (a *authService) OauthLogin(c echo.Context, storage system.Storage) error {
 	defer system.Perf("oauth_login", time.Now())
 	var authDB = newAuthDB(&storage)
-    var OAuthConfig = newOAuthConfig()
-	config, err := OAuthConfig.getOAuthConfig(c.Param("provider"))
-	if err != nil {
-		slog.Error("Error getting provider", "getOAuthConfig", err)
-		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
-	}
+    provider := c.Param("provider")
+    var OAuth OAuth
+    if provider == "google" {
+        OAuth = newOAuthGoogle()
+    } else if provider == "github" {
+        OAuth = newOAuthGithub()
+    } else {
+        slog.Error("Invalid provider", "provider", provider)
+        return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
+    }
+
 
 	// generate random state and verifier
 	state := system.GenerateRandomState(32)
 	verifier := oauth2.GenerateVerifier()
 	// store state and verifier
-	_, err = authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
+    _, err := authDB.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
 	if err != nil {
 		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
 	}
 	// Redirect user to consent page to ask for permission
-	url := config.AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
+	url := OAuth.getOAuthConfig().AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func (a *authService) OauthCallback(c echo.Context, storage system.Storage) error {
 	defer system.Perf("oauth_callback", time.Now())
 	var authDB = newAuthDB(&storage)
-    var OAuthConfig = newOAuthConfig()
+
 	provider := c.Param("provider")
 	code := c.QueryParam("code")
 	state := c.QueryParam("state")
+	var OAuth OAuth
+	if provider == "google" {
+		OAuth = newOAuthGoogle()
+	} else if provider == "github" {
+		OAuth = newOAuthGithub()
+	} else {
+		slog.Error("Invalid provider", "provider", provider)
+		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
+	}
 
 	// get verifier from state
 	token, err := authDB.seleteTokenByState(state)
@@ -214,11 +228,7 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	}
 
 	// get oauth config
-	config, err := OAuthConfig.getOAuthConfig(provider)
-	if err != nil {
-		slog.Error("Error getting provider", "getOAuthConfig", err)
-		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
-	}
+	config := OAuth.getOAuthConfig()
 
 	// get oauth token
 	oauthToken, err := config.Exchange(context.Background(), code, oauth2.VerifierOption(token.Verifier))
@@ -228,7 +238,7 @@ func (a *authService) OauthCallback(c echo.Context, storage system.Storage) erro
 	}
 
 	// fetch user info from github
-	userInfo, err := OAuthConfig.getUserInfo(provider, oauthToken.AccessToken)
+	userInfo, err := OAuth.getUserInfo(oauthToken.AccessToken)
 	if err != nil {
 		slog.Error("Error fetching user info", "configProvider.getUserInfo", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")

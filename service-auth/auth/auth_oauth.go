@@ -10,12 +10,6 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-type UserInfo struct {
-	email  string
-	sub    string
-	avatar string
-}
-
 var githubOAuthConfig = oauth2.Config{
 	ClientID:     system.GITHUB_CLIENT_ID,
 	ClientSecret: system.GITHUB_CLIENT_SECRET,
@@ -35,98 +29,112 @@ var googleOAuthConfig = oauth2.Config{
 	Scopes:       []string{"profile", "email", "openid"},
 }
 
-type OAuthConfigProvider interface {
-	getOAuthConfig(provider string) (*oauth2.Config, error)
-	getUserInfo(provider string, accessToken string) (*UserInfo, error)
-}
-type OAuthConfigImpl struct {}
-
-func newOAuthConfig() OAuthConfigProvider {
-    return &OAuthConfigImpl{}
+type UserInfo struct {
+	email  string
+	sub    string
+	avatar string
 }
 
-func (o OAuthConfigImpl) getOAuthConfig(provider string) (*oauth2.Config, error) {
-	if provider == "github" {
-		return &githubOAuthConfig, nil
-	} else if provider == "google" {
-		return &googleOAuthConfig, nil
+type OAuth interface {
+    getOAuthConfig() *oauth2.Config
+	getUserInfo(accessToken string) (*UserInfo, error)
+}
+
+type OAuthGoogle struct {
+	googleOAuthConfig oauth2.Config
+}
+
+func newOAuthGoogle() OAuth {
+	return &OAuthGoogle{
+		googleOAuthConfig: googleOAuthConfig,
 	}
-	return nil, fmt.Errorf("Invalid provider")
 }
 
-func (o *OAuthConfigImpl) getUserInfo(provider string, accessToken string) (*UserInfo, error) {
-	var url string
-	if provider == "github" {
-		url = "https://api.github.com/user"
-	} else if provider == "google" {
-		url = "https://www.googleapis.com/oauth2/v2/userinfo"
-	} else {
-		return nil, fmt.Errorf("Invalid provider")
-	}
+type OAuthGithub struct {
+	githubOAuthConfig oauth2.Config
+}
 
-	// Create a GET request to fetch user information from GitHub
-	req, err := http.NewRequest("GET", url, nil)
+func newOAuthGithub() OAuth {
+	return &OAuthGithub{
+		githubOAuthConfig: githubOAuthConfig,
+	}
+}
+
+func (o *OAuthGoogle) getOAuthConfig() *oauth2.Config {
+    return &o.googleOAuthConfig
+}
+
+func (o *OAuthGoogle) getUserInfo(accessToken string) (*UserInfo, error) {
+	url := "https://www.googleapis.com/oauth2/v2/userinfo"
+	userInfo, err := httpCall("GET", url, accessToken)
+	if err != nil {
+		return nil, fmt.Errorf("httpCall: %w", err)
+	}
+	sub, ok := userInfo["id"].(string)
+	if !ok {
+		return nil, fmt.Errorf("Invalid user id")
+	}
+	email, ok := userInfo["email"].(string)
+	if !ok {
+		email = ""
+	}
+	avatar, ok := userInfo["picture"].(string)
+	if !ok {
+		avatar = ""
+	}
+	return &UserInfo{
+		email:  email,
+		sub:    sub,
+		avatar: avatar,
+	}, nil
+}
+
+func (o *OAuthGithub) getOAuthConfig() *oauth2.Config {
+    return &o.githubOAuthConfig
+}
+
+func (o *OAuthGithub) getUserInfo(accessToken string) (*UserInfo, error) {
+	url := "https://api.github.com/user"
+	userInfo, err := httpCall("GET", url, accessToken)
+	if err != nil {
+		return nil, fmt.Errorf("httpCall: %w", err)
+	}
+	userId, ok := userInfo["id"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("Invalid user id")
+	}
+	sub := fmt.Sprintf("%.0f", userId)
+	email, ok := userInfo["email"].(string)
+	if !ok {
+		email = ""
+	}
+	avatar, ok := userInfo["avatar_url"].(string)
+	if !ok {
+		avatar = ""
+	}
+	return &UserInfo{
+		email:  email,
+		sub:    sub,
+		avatar: avatar,
+	}, nil
+}
+
+func httpCall(method, url, accessToken string) (map[string]interface{}, error) {
+	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest: %w", err)
 	}
-
-	// Set the "Authorization" header with the access token
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
-
-	// Send the request
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("client.Do: %w", err)
 	}
 	defer resp.Body.Close()
-
-	// Parse the JSON response
 	var userInfo map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&userInfo)
 	if err != nil {
 		return nil, fmt.Errorf("json.NewDecoder: %w", err)
 	}
-
-	var sub string
-	var email string
-	var avatar string
-	var ok bool
-	if provider == "github" {
-		userId, ok := userInfo["id"].(float64)
-		if !ok {
-			return nil, fmt.Errorf("Invalid user id")
-		}
-		sub = fmt.Sprintf("%.0f", userId)
-		email, ok = userInfo["email"].(string)
-		if !ok {
-			email = ""
-		}
-		avatar, ok = userInfo["avatar_url"].(string)
-		if !ok {
-			avatar = ""
-		}
-
-	} else if provider == "google" {
-		sub, ok = userInfo["id"].(string)
-		if !ok {
-			return nil, fmt.Errorf("Invalid user id")
-		}
-		email, ok = userInfo["email"].(string)
-		if !ok {
-			email = ""
-		}
-		avatar, ok = userInfo["picture"].(string)
-		if !ok {
-			avatar = ""
-		}
-	} else {
-		return nil, fmt.Errorf("Invalid provider")
-	}
-
-	return &UserInfo{
-		email:  email,
-		sub:    sub,
-		avatar: avatar,
-	}, nil
+	return userInfo, nil
 }
