@@ -16,12 +16,10 @@ type ProfileDB interface {
 }
 
 type ProfileDBImpl struct {
-	system.Storage
+	*system.Storage
 }
 
-var _ ProfileDB = ProfileDBImpl{}
-
-func NewProfileDB(s system.Storage) ProfileDB {
+func NewProfileDB(s *system.Storage) ProfileDB {
 	return ProfileDBImpl{s}
 }
 
