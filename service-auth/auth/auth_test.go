@@ -21,8 +21,17 @@ var users = []*pb.User{
 	},
 }
 
-func clearUsers(storage *system.Storage) {
-	_, _ = storage.Conn.Exec("delete from users")
+func setup() AuthDB {
+	storage, err := system.NewStorage()
+	if err != nil {
+		panic(err)
+	}
+	_, err = storage.Conn.Exec("delete from users")
+	if err != nil {
+		panic(err)
+	}
+	var db = NewAuthDB(&storage)
+	return db
 }
 
 func TestInsertUsers(t *testing.T) {
