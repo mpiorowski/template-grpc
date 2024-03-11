@@ -11,7 +11,7 @@ import { safe } from "./safe";
  *  @template T
  *  @template D = T
  */
-export default async function api(
+export async function api(
     url,
     { method = "GET", body = undefined } = {},
 ) {

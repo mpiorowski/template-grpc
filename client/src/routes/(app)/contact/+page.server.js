@@ -1,6 +1,6 @@
 import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
 import { getValue } from "$lib/helpers";
-import api from "$lib/server/api";
+import { api } from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 import { fail } from "@sveltejs/kit";
 

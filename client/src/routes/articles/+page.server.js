@@ -1,5 +1,5 @@
 import { PUBLIC_DIRECTUS_URL } from "$env/static/public";
-import api from "$lib/server/api";
+import { api } from "$lib/server/api";
 import { logger, perf } from "$lib/server/logger";
 import { error } from "@sveltejs/kit";
 
