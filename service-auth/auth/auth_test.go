@@ -21,6 +21,18 @@ var users = []*pb.User{
 	},
 }
 
+func TestMain(m *testing.M) {
+	storage, err := system.NewStorage()
+	if err != nil {
+		panic(err)
+	}
+	err = storage.Migrations()
+	if err != nil {
+		panic(err)
+	}
+	m.Run()
+}
+
 func setup() AuthDB {
 	storage, err := system.NewStorage()
 	if err != nil {
@@ -35,9 +47,7 @@ func setup() AuthDB {
 }
 
 func TestInsertUsers(t *testing.T) {
-	storage := system.NewMemoryStorage()
-	clearUsers(&storage)
-	var db = NewAuthDB(&storage)
+	db := setup()
 
 	// Test case 1: Insert users
 	for _, user := range users {
@@ -73,17 +83,15 @@ func TestInsertUsers(t *testing.T) {
 	}
 
 	// Test case 5: Insert user with empty avatar
-	clearUsers(&storage)
-	_, err = db.insertUser(users[0].Email, users[0].Sub, "")
+	_, err = db.insertUser("mat@gmail.com", "789", "")
 	if err != nil {
 		t.Error("User with empty avatar is not inserted")
 	}
 }
 
 func TestSelectUsers(t *testing.T) {
-	storage := system.NewMemoryStorage()
-	var db = NewAuthDB(&storage)
-	clearUsers(&storage)
+	db := setup()
+
 	// Test case 1: Select users
 	for _, user := range users {
 		u, err := db.insertUser(user.Email, user.Sub, user.Avatar)

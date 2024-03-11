@@ -15,6 +15,7 @@ export interface ProtoGrpcType {
     Count: MessageTypeDefinition
     Empty: MessageTypeDefinition
     Id: MessageTypeDefinition
+    Note: MessageTypeDefinition
     Page: MessageTypeDefinition
     Profile: MessageTypeDefinition
     ProfileService: SubtypeConstructor<typeof grpc.Client, _proto_ProfileServiceClient> & { service: _proto_ProfileServiceDefinition }

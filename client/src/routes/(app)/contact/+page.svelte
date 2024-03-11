@@ -34,50 +34,62 @@
         };
     }}
 >
-    <div class="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
-        <Input
-            bind:value={contact.first_name}
-            label="First name"
-            name="first_name"
-            type="text"
-            autocomplete="given-name"
-        />
-        <Input
-            bind:value={contact.last_name}
-            label="Last name"
-            name="last_name"
-            type="text"
-            autocomplete="family-name"
-        />
-        <div class="sm:col-span-2">
-            <Input
-                bind:value={contact.email}
-                label="Email"
-                name="email"
-                type="email"
-                autocomplete="email"
-            />
+    <div class="space-y-12">
+        <div>
+            <h2
+                class="flex items-center gap-2 text-base font-semibold leading-7"
+            >
+                Contact
+            </h2>
+            <p class="mt-1 text-sm leading-6 text-gray-400">
+                Send us a message.
+            </p>
         </div>
-        <div class="sm:col-span-2">
+        <div class="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
             <Input
-                bind:value={contact.phone}
-                label="Phone number"
-                name="phone"
-                type="tel"
-                autocomplete="tel"
-            />
-        </div>
-        <div class="sm:col-span-2">
-            <Input
-                bind:value={contact.message}
-                label="Message"
-                name="message"
+                bind:value={contact.first_name}
+                label="First name"
+                name="first_name"
                 type="text"
-                rows={4}
+                autocomplete="given-name"
             />
+            <Input
+                bind:value={contact.last_name}
+                label="Last name"
+                name="last_name"
+                type="text"
+                autocomplete="family-name"
+            />
+            <div class="sm:col-span-2">
+                <Input
+                    bind:value={contact.email}
+                    label="Email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                />
+            </div>
+            <div class="sm:col-span-2">
+                <Input
+                    bind:value={contact.phone}
+                    label="Phone number"
+                    name="phone"
+                    type="tel"
+                    autocomplete="tel"
+                />
+            </div>
+            <div class="sm:col-span-2">
+                <Input
+                    bind:value={contact.message}
+                    label="Message"
+                    name="message"
+                    type="text"
+                    rows={4}
+                />
+            </div>
         </div>
     </div>
-    <div class="mt-8 flex justify-end">
+    <div class="flex justify-end">
         <Button>Send message</Button>
     </div>
 </form>

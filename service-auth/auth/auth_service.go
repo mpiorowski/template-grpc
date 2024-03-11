@@ -124,7 +124,7 @@ func (a *AuthServiceImpl) CreateStripeCheckout(ctx context.Context) (*pb.StripeU
 		customerId, err = createStripeUser(user.Id, user.Email, a.AuthDB)
 		if err != nil {
 			slog.Error("Error creating stripe user", "createStripeUser", err)
-			return nil, status.Error(codes.Internal, "Internal error")
+			return nil, status.Error(codes.Internal, "Error creating stripe user")
 		}
 	}
 
@@ -149,12 +149,13 @@ func (a *AuthServiceImpl) CreateStripeCheckout(ctx context.Context) (*pb.StripeU
 	session, err := checkout_session.New(params)
 	if err != nil {
 		slog.Error("Error creating stripe checkout", "checkout_session.New", err)
-		return nil, status.Error(codes.Internal, "Internal error")
+		return nil, status.Error(codes.Internal, "Error creating stripe checkout")
 	}
 
 	err = a.updateSubscriptionCheck(user.Id, "1970-01-01T00:00:00Z")
 	if err != nil {
 		slog.Error("Error updating subscription check date", "updateSubscriptionCheck", err)
+        return nil, status.Error(codes.Internal, "Error updating subscription check date")
 	}
 	return &pb.StripeUrlResponse{
 		Url: session.URL,
@@ -177,7 +178,7 @@ func (a *AuthServiceImpl) CreateStripePortal(ctx context.Context) (*pb.StripeUrl
 	session, err := portal_session.New(params)
 	if err != nil {
 		slog.Error("Error creating stripe portal", "portal_session.New", err)
-		return nil, status.Error(codes.Internal, "Internal error")
+		return nil, status.Error(codes.Internal, "Error creating stripe portal")
 	}
 
 	return &pb.StripeUrlResponse{

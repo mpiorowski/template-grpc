@@ -23,7 +23,7 @@ func NewProfileDB(s *system.Storage) ProfileDB {
 	return &profileDB{s}
 }
 
-func dest(profile *pb.Profile) []interface{} {
+func profileMap(profile *pb.Profile) []interface{} {
 	return []interface{}{
 		&profile.Id,
 		&profile.Created,
@@ -52,7 +52,7 @@ func dest(profile *pb.Profile) []interface{} {
 func (db *profileDB) selectProfileByUserId(userId string) (*pb.Profile, bool, error) {
 	row := db.Conn.QueryRow("select * from profiles where user_id = ?", userId)
 	var profile pb.Profile
-	err := row.Scan(dest(&profile)...)
+	err := row.Scan(profileMap(&profile)...)
 	if err == sql.ErrNoRows {
 		return nil, false, nil
 	}
@@ -108,7 +108,7 @@ func (db *profileDB) insertProfile(profile *pb.Profile) (*pb.Profile, error) {
 		profile.Position,
 		profile.Skills,
 	)
-	err = row.Scan(dest(profile)...)
+	err = row.Scan(profileMap(profile)...)
 	if err != nil {
 		return nil, fmt.Errorf("insertProfile: %w", err)
 	}
@@ -155,7 +155,7 @@ func (db *profileDB) updateProfile(profile *pb.Profile) (*pb.Profile, error) {
 		profile.Id,
 		profile.UserId,
 	)
-	err := row.Scan(dest(profile)...)
+	err := row.Scan(profileMap(profile)...)
 	if err != nil {
 		return nil, fmt.Errorf("updateProfile: %w", err)
 	}

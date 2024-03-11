@@ -18,7 +18,7 @@ type ValidationError struct {
 func CreateErrors (errors []ValidationError) error {
 	errorJSON, err := json.Marshal(errors)
 	if err != nil {
-		return status.Errorf(codes.Internal, "json.Marshal: %v", err)
+		return status.Error(codes.Internal, "Error creating errors")
 	}
 	return status.Errorf(codes.InvalidArgument, "%s", errorJSON)
 }

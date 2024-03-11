@@ -11,15 +11,15 @@ func isRunningTest() bool {
 			return true
 		}
 	}
-    return false
+	return false
 }
 
 func mustHaveEnv(key string) string {
-	if isRunningTest() {
-		return "test"
-	}
 	value := os.Getenv(key)
 	if value == "" {
+		if isRunningTest() {
+			return "test"
+		}
 		panic("Missing environment variable: " + key)
 	}
 	return value

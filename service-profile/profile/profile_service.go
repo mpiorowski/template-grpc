@@ -60,7 +60,7 @@ func (s *profileService) UpdateProfile(ctx context.Context, profile *pb.Profile)
 	profile, err = s.updateProfile(profile)
 	if err != nil {
 		slog.Error("Error updating profile", "err", err)
-		return nil, status.Error(codes.Internal, "Internal error")
+		return nil, status.Error(codes.Internal, "Error updating profile")
 	}
 	return profile, nil
 }

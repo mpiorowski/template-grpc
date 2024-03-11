@@ -35,5 +35,25 @@ func (s Storage) Migrations() error {
 	if err != nil {
 		return err
 	}
+
+	// Create notes table
+	_, err = s.Conn.Exec(`
+        create table if not exists notes (
+            id text primary key not null,
+            created datetime not null default current_timestamp,
+            updated datetime not null default current_timestamp,
+            deleted datetime not null default '2400-01-01 00:00:00',
+            user_id text not null,
+            title text not null,
+            content text not null
+        )`)
+	if err != nil {
+		return err
+	}
+	// Create index for user_id
+	_, err = s.Conn.Exec(`create index if not exists user_id on notes (user_id)`)
+	if err != nil {
+		return err
+	}
 	return nil
 }
