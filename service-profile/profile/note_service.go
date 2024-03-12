@@ -12,6 +12,7 @@ import (
 )
 
 type NoteService interface {
+	CountNotesByUserId(ctx context.Context, empty *pb.Empty) (*pb.Count, error)
 	GetNotesByUserId(ctx context.Context, page *pb.Page, stream pb.ProfileService_GetNotesByUserIdServer) error
 	GetNoteById(ctx context.Context, id *pb.Id) (*pb.Note, error)
 	CreateNote(ctx context.Context, note *pb.Note) (*pb.Note, error)
@@ -24,6 +25,21 @@ type NoteServiceImpl struct {
 
 func NewNoteServiceImpl(db NoteDB) NoteService {
 	return &NoteServiceImpl{db: db}
+}
+
+func (n *NoteServiceImpl) CountNotesByUserId(ctx context.Context, empty *pb.Empty) (*pb.Count, error) {
+	defer system.Perf("count_notes_by_user_id", time.Now())
+	user, err := system.ExtractToken(ctx)
+	if err != nil {
+		slog.Error("Error extracting token", "error", err)
+		return nil, status.Error(codes.Unauthenticated, "Unauthenticated")
+	}
+	count, err := n.db.CountNotesByUserId(ctx, user.Id)
+	if err != nil {
+		slog.Error("Error counting notes", "user_id", user.Id, "error", err)
+		return nil, status.Error(codes.Internal, "Error counting notes")
+	}
+	return &pb.Count{Count: count}, nil
 }
 
 func (n *NoteServiceImpl) GetNotesByUserId(ctx context.Context, page *pb.Page, stream pb.ProfileService_GetNotesByUserIdServer) error {

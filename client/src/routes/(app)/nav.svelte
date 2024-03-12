@@ -26,6 +26,7 @@
                 <a
                     on:click={close}
                     href="/profile"
+                    aria-current={current === "profile" ? "page" : undefined}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
                     {current === 'profile'
                         ? 'bg-gray-800 text-white'
@@ -55,6 +56,7 @@
                 <a
                     on:click={close}
                     href="/notes"
+                    aria-current={current === "notes" ? "page" : undefined}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
                     {current === 'notes'
                         ? 'bg-gray-800 text-white'
@@ -86,6 +88,7 @@
                 <a
                     on:click={close}
                     href="/contact"
+                    aria-current={current === "contact" ? "page" : undefined}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
                     {current === 'contact'
                         ? 'bg-gray-800 text-white'
@@ -114,6 +117,7 @@
                 <a
                     on:click={close}
                     href="/billing"
+                    aria-current={current === "billing" ? "page" : undefined}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
                     {current === 'billing'
                         ? 'bg-gray-800 text-white'
@@ -148,6 +152,7 @@
                 <a
                     on:click={close}
                     href="/articles"
+                    aria-current={current === "articles" ? "page" : undefined}
                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6
                     {current === 'articles'
                         ? 'bg-gray-800 text-white'

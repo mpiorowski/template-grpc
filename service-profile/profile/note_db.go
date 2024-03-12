@@ -9,7 +9,7 @@ import (
 )
 
 type NoteDB interface {
-	CountNotesByUserId(ctx context.Context) (int64, error)
+	CountNotesByUserId(ctx context.Context, userId string) (int64, error)
 	GetNotesByUserId(ctx context.Context, noteChan chan<- *pb.Note, errChan chan<- error, userId string, limit int64, offset int64)
 	GetNoteById(ctx context.Context, id *pb.Id) (*pb.Note, error)
 	InsertNote(ctx context.Context, note *pb.Note) (*pb.Note, error)
@@ -37,8 +37,8 @@ func noteMap(note *pb.Note) []interface{} {
 	}
 }
 
-func (n *NoteDBImpl) CountNotesByUserId(ctx context.Context) (int64, error) {
-	row := n.db.Conn.QueryRowContext(ctx, "select count(*) from notes where user_id = ?", 1)
+func (n *NoteDBImpl) CountNotesByUserId(ctx context.Context, userId string) (int64, error) {
+	row := n.db.Conn.QueryRowContext(ctx, "select count(*) from notes where user_id = ?", userId)
 	var count int64
 	err := row.Scan(&count)
 	if err != nil {

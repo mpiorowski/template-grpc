@@ -18,6 +18,12 @@ func (s *server) UpdateProfile(ctx context.Context, in *pb.Profile) (*pb.Profile
 	return profileService.UpdateProfile(ctx, in)
 }
 
+func (s *server) CountNotesByUserId(ctx context.Context, in *pb.Empty) (*pb.Count, error) {
+    noteDB := profile.NewNoteDBImpl(&s.storage)
+    noteService := profile.NewNoteServiceImpl(noteDB)
+    return noteService.CountNotesByUserId(ctx, in)
+}
+
 func (s *server) GetNotesByUserId(page *pb.Page, stream pb.ProfileService_GetNotesByUserIdServer) error {
 	noteDB := profile.NewNoteDBImpl(&s.storage)
 	noteService := profile.NewNoteServiceImpl(noteDB)

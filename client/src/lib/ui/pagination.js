@@ -1,13 +1,11 @@
 /** Generate pagination schema
- * @template T
- * @param {T[]} data
- * @param {number} currentPage
- * @param {number} pageSize
+ * @param {number} total
+ * @param {number} page
+ * @param {number} limit
  * @returns {number[]}
  */
-function generatePaginationSchema(data, currentPage, pageSize = 10) {
-    const totalItems = data.length;
-    const totalPages = Math.ceil(totalItems / pageSize);
+function generatePaginationSchema(total, page, limit) {
+    const totalPages = Math.ceil(total / limit);
     const paginationArray = [];
 
     if (totalPages <= 7) {
@@ -17,22 +15,22 @@ function generatePaginationSchema(data, currentPage, pageSize = 10) {
     } else {
         paginationArray.push(1);
 
-        if (currentPage < 4) {
+        if (page < 4) {
             for (let i = 2; i <= 4; i++) {
                 paginationArray.push(i);
             }
             paginationArray.push(0);
         }
 
-        if (currentPage >= 4 && currentPage <= totalPages - 3) {
+        if (page >= 4 && page <= totalPages - 3) {
             paginationArray.push(0);
-            for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            for (let i = page - 1; i <= page + 1; i++) {
                 paginationArray.push(i);
             }
             paginationArray.push(0);
         }
 
-        if (currentPage > totalPages - 3) {
+        if (page > totalPages - 3) {
             paginationArray.push(0);
             for (let i = totalPages - 3; i <= totalPages - 1; i++) {
                 paginationArray.push(i);
@@ -47,12 +45,10 @@ function generatePaginationSchema(data, currentPage, pageSize = 10) {
 
 /**
  * Generate pagination data
- * @template T
- * @param {T[]} data
- * @param {number} currentPage
- * @param {number} pageSize
+ * @param {number} total
+ * @param {number} page
+ * @param {number} limit
  * @returns {{
- * data: T[],
  * start: number,
  * end: number,
  * prev: number,
@@ -61,23 +57,15 @@ function generatePaginationSchema(data, currentPage, pageSize = 10) {
  * schema: number[]
  * }}
  */
-export function pagination(data, currentPage, pageSize = 10) {
-    const paginated = data.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize,
-    );
-    const total = data.length;
-    const start = (currentPage - 1) * pageSize + 1;
-    const end = currentPage * pageSize > total ? total : currentPage * pageSize;
-    const prev = currentPage > 1 ? currentPage - 1 : 1;
+export function pagination(total, page, limit) {
+    const start = (page - 1) * limit + 1;
+    const end = page * limit > total ? total : page * limit;
+    const prev = page > 1 ? page - 1 : 1;
     const next =
-        currentPage < Math.ceil(total / pageSize)
-            ? currentPage + 1
-            : Math.ceil(total / pageSize);
-    const schema = generatePaginationSchema(data, currentPage);
+        page < Math.ceil(total / limit) ? page + 1 : Math.ceil(total / limit);
+    const schema = generatePaginationSchema(total, page, limit);
 
     return {
-        data: paginated,
         start,
         end,
         prev,

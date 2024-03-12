@@ -6,13 +6,26 @@ import { error, fail } from "@sveltejs/kit";
 import { perf } from "$lib/server/logger";
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
+export async function load({ locals, url }) {
     const end = perf("load_notes");
+    const page = url.searchParams.get("page") || "1";
+    const limit = url.searchParams.get("limit") || "2";
 
-    /** @type {import("$lib/proto/proto/Page").Page__Output} */
+    const total = await new Promise((res) =>
+        profileService.CountNotesByUserId(
+            {},
+            createMetadata(locals.user.id),
+            grpcSafe(res),
+        ),
+    );
+    if (!total.success) {
+        throw error(500, total.error);
+    }
+
+    /** @type {import("$lib/proto/proto/Page").Page} */
     const request = {
-        offset: "0",
-        limit: "10",
+        offset: (parseInt(page) - 1) * parseInt(limit),
+        limit: limit,
     };
     /** @type {import("$lib/proto/proto/Note").Note__Output[]} */
     const notes = [];
@@ -31,7 +44,10 @@ export async function load({ locals }) {
         throw error(500, r.error);
     }
     end();
+
     return {
+        total: total.data.count,
+        limit: parseInt(limit),
         notes: notes,
     };
 }

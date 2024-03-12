@@ -5,6 +5,7 @@
     import Input from "$lib/form/Input.svelte";
     import SaveIcon from "$lib/icons/SaveIcon.svelte";
     import { extractError } from "$lib/errors";
+    import Pagination from "$lib/ui/Pagination.svelte";
 
     /** @type {import("./$types").PageData} */
     export let data;
@@ -93,5 +94,6 @@
                 <Button class="w-20" href="/notes/{note.id}">Edit</Button>
             </div>
         {/each}
+        <Pagination total={data.total} limit={data.limit} />
     </div>
 </form>
