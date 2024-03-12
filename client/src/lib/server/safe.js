@@ -1,6 +1,6 @@
 /**
  * @param {Promise<T> | (() => T)} promiseOrFunc
- * @returns {Promise<import("./safe").Safe<T>> | import("./safe.types").Safe<T>}
+ * @returns {Promise<import("./safe").Safe<T>> | import("./safe").Safe<T>}
  * @template T
  * @public
  */

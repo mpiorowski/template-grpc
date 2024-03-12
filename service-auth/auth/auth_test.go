@@ -22,11 +22,8 @@ var users = []*pb.User{
 }
 
 func TestMain(m *testing.M) {
-	storage, err := system.NewStorage()
-	if err != nil {
-		panic(err)
-	}
-	err = storage.Migrations()
+	storage := system.NewMemoryStorage()
+    err := storage.Migrations()
 	if err != nil {
 		panic(err)
 	}
