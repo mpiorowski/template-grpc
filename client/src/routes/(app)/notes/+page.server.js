@@ -25,7 +25,7 @@ export async function load({ locals, url }) {
     /** @type {import("$lib/proto/proto/Page").Page} */
     const request = {
         offset: (parseInt(page) - 1) * parseInt(limit),
-        limit: limit,
+        limit: parseInt(limit),
     };
     /** @type {import("$lib/proto/proto/Note").Note__Output[]} */
     const notes = [];

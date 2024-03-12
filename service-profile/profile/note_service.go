@@ -39,7 +39,7 @@ func (n *NoteServiceImpl) CountNotesByUserId(ctx context.Context, empty *pb.Empt
 		slog.Error("Error counting notes", "user_id", user.Id, "error", err)
 		return nil, status.Error(codes.Internal, "Error counting notes")
 	}
-	return &pb.Count{Count: count}, nil
+	return &pb.Count{Count: int32(count)}, nil
 }
 
 func (n *NoteServiceImpl) GetNotesByUserId(ctx context.Context, page *pb.Page, stream pb.ProfileService_GetNotesByUserIdServer) error {
@@ -54,7 +54,7 @@ func (n *NoteServiceImpl) GetNotesByUserId(ctx context.Context, page *pb.Page, s
 	go func() {
 		defer close(noteChan)
 		defer close(errChan)
-		n.db.GetNotesByUserId(ctx, noteChan, errChan, user.Id, page.Limit, page.Offset)
+		n.db.GetNotesByUserId(ctx, noteChan, errChan, user.Id, int64(page.Limit), int64(page.Offset))
 	}()
 
 	for note := range noteChan {

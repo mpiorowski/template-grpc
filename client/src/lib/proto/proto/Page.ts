@@ -1,13 +1,12 @@
 // Original file: proto/main.proto
 
-import type { Long } from '@grpc/proto-loader';
 
 export interface Page {
-  'offset'?: (number | string | Long);
-  'limit'?: (number | string | Long);
+  'offset'?: (number);
+  'limit'?: (number);
 }
 
 export interface Page__Output {
-  'offset': (string);
-  'limit': (string);
+  'offset': (number);
+  'limit': (number);
 }

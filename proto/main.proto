@@ -12,12 +12,14 @@ message Id {
 }
 
 message Page {
-    int64 offset = 1;
-    int64 limit = 2;
+    // TODO: when grpc type genr error is fixed, change ito to int64
+    int32 offset = 1;
+    int32 limit = 2;
 }
 
 message Count {
-    int64 count = 1;
+    // TODO: when grpc type genr error is fixed, change ito to int64
+    int32 count = 1;
 }
 
 message AuthResponse {
