@@ -23,7 +23,7 @@ var users = []*pb.User{
 
 func TestMain(m *testing.M) {
 	storage := system.NewMemoryStorage()
-    err := storage.Migrations()
+	err := storage.Migrations()
 	if err != nil {
 		panic(err)
 	}
@@ -31,11 +31,8 @@ func TestMain(m *testing.M) {
 }
 
 func setup() AuthDB {
-	storage, err := system.NewStorage()
-	if err != nil {
-		panic(err)
-	}
-	_, err = storage.Conn.Exec("delete from users")
+	storage := system.NewMemoryStorage()
+	_, err := storage.Conn.Exec("delete from users")
 	if err != nil {
 		panic(err)
 	}

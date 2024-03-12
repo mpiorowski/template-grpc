@@ -1,7 +1,7 @@
 {
     "extends": "./.svelte-kit/tsconfig.json",
     "include": ["src/**/*", ".svelte-kit/**/*.d.ts", "tests/**/*"],
-    "exclude": ["node_modules/*", "src/lib/proto/**"],
+    "exclude": ["node_modules", "src/lib/proto"],
     "compilerOptions": {
         "allowJs": true,
         "checkJs": true,
