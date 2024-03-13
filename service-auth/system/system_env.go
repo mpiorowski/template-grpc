@@ -31,7 +31,6 @@ var (
 	GRPC_PORT            = mustHaveEnv("GRPC_PORT")
 	JWT_SECRET           = mustHaveEnv("JWT_SECRET")
 	TURSO_URL            = mustHaveEnv("TURSO_URL")
-	COOKIE_DOMAIN        = mustHaveEnv("COOKIE_DOMAIN")
 	CLIENT_URL           = mustHaveEnv("CLIENT_URL")
 	SERVER_HTTP          = mustHaveEnv("SERVER_HTTP")
 	STRIPE_API_KEY       = mustHaveEnv("STRIPE_API_KEY")

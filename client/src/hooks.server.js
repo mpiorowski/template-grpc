@@ -62,7 +62,11 @@ export async function handle({ event, resolve }) {
     const auth = await new Promise((res) => {
         authService.Auth({}, metadata, grpcSafe(res));
     });
-    if (!auth.success || !auth.data.token || !auth.data.user) {
+    if (!auth.success) {
+        logger.error(auth.error, "Error during auth");
+        throw redirect(302, "/auth");
+    }
+    if (!auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
         throw redirect(302, "/auth");
     }
@@ -72,7 +76,7 @@ export async function handle({ event, resolve }) {
     // logger.debug(event.locals.user, "user");
 
     if (event.url.pathname === "/") {
-        throw redirect(302, "/contact");
+        throw redirect(302, "/profile");
     }
 
     end();

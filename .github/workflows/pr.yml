@@ -9,8 +9,6 @@ on:
 jobs:
   lint-client:
     uses: ./.github/workflows/lint-client.yml
-    secrets:
-      GSAP_TOKEN: ${{ secrets.GSAP_TOKEN }}
   lint-service-auth:
     uses: ./.github/workflows/lint-service-auth.yml
   lint-service-profile:

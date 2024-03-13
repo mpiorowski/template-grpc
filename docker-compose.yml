@@ -34,7 +34,6 @@ services:
       LOG_LEVEL: debug
       HTTP_PORT: 3001
       GRPC_PORT: 3002
-      COOKIE_DOMAIN: localhost
       CLIENT_URL: http://localhost:3000
       SERVER_HTTP: http://localhost:3001
       TLS: "false"
