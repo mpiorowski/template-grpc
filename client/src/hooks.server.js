@@ -63,12 +63,12 @@ export async function handle({ event, resolve }) {
         authService.Auth({}, metadata, grpcSafe(res));
     });
     if (!auth.success) {
-        logger.error(auth.error, "Error during auth");
-        throw redirect(302, "/auth");
+        logger.error(`Error during auth: ${auth.error}`);
+        throw redirect(302, "/auth?error=unauthorized");
     }
     if (!auth.data.token || !auth.data.user) {
         logger.error("Error during auth");
-        throw redirect(302, "/auth");
+        throw redirect(302, "/auth?error=unauthorized");
     }
 
     event.locals.user = auth.data.user;
