@@ -7,7 +7,7 @@ export const packageDefinition = protoLoader.loadSync(
     {
         keepCase: true,
         longs: String,
-        enums: String,
+        enums: Number,
         defaults: true,
         oneofs: true,
     },
