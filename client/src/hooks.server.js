@@ -75,6 +75,14 @@ export async function handle({ event, resolve }) {
     event.locals.token = auth.data.token;
     // logger.debug(event.locals.user, "user");
 
+    /**
+     * Last check to make sure we have a user
+     */
+    if (!event.locals.user.id) {
+        logger.error("No user found");
+        throw redirect(303, "/auth");
+    }
+
     if (event.url.pathname === "/") {
         throw redirect(302, "/profile");
     }
