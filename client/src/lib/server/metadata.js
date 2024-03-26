@@ -1,6 +1,6 @@
 import { Metadata } from "@grpc/grpc-js";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 
 /**
  * Create a Metadata object with the correct authorization headers
@@ -16,7 +16,7 @@ export function createMetadata(id) {
     };
 
     // Generate and sign the token
-    const oauthToken = jwt.sign(tokenPayload, JWT_SECRET, {
+    const oauthToken = jwt.sign(tokenPayload, env.JWT_SECRET, {
         algorithm: "HS256",
         expiresIn: "1h",
     });

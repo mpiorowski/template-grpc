@@ -14,18 +14,18 @@ func ContainsString(s []string, str string) bool {
 	}
 	return false
 }
-func GenerateRandomState(length int) (string) {
+func GenerateRandomState(length int) (string, error) {
 	// Generate random bytes
 	randomBytes := make([]byte, length)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
-        panic(err)
+        return "", err
 	}
 
 	// Encode the random bytes to a base64 URL-safe string
 	state := base64.URLEncoding.EncodeToString(randomBytes)
 
-	return state
+	return state, nil
 }
 
 func GenerateRandomString(length int) (string, error) {

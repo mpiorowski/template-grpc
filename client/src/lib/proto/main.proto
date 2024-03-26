@@ -1,5 +1,5 @@
 syntax = "proto3";
-option go_package = "powerit/proto";
+option go_package = "template/proto";
 package proto;
 
 import "auth.proto";
@@ -12,11 +12,13 @@ message Id {
 }
 
 message Page {
+    // TODO: when grpc type genr error is fixed, change ito to int64
     int32 offset = 1;
     int32 limit = 2;
 }
 
 message Count {
+    // TODO: when grpc type genr error is fixed, change ito to int64
     int32 count = 1;
 }
 

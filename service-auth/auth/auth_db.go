@@ -142,7 +142,7 @@ func (db *AuthDBImpl) insertUser(email string, sub string, avatar string) (*pb.U
 		return nil, err
 	}
 	row := db.Conn.QueryRow("insert into users (id, email, sub, role, avatar) values (?, ?, ?, ?, ?) returning *",
-		id, email, sub, pb.UserRole_ROLE_USER, avatar)
+		id, email, sub, pb.Role_ROLE_USER, avatar)
 	var user pb.User
 	err = row.Scan(dest(&user)...)
 	if err != nil {

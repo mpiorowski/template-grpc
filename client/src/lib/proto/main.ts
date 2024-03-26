@@ -19,9 +19,9 @@ export interface ProtoGrpcType {
     Page: MessageTypeDefinition
     Profile: MessageTypeDefinition
     ProfileService: SubtypeConstructor<typeof grpc.Client, _proto_ProfileServiceClient> & { service: _proto_ProfileServiceDefinition }
+    Role: EnumTypeDefinition
     StripeUrlResponse: MessageTypeDefinition
     User: MessageTypeDefinition
-    UserRole: EnumTypeDefinition
   }
 }
 

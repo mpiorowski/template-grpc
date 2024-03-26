@@ -200,10 +200,14 @@ func (a *AuthServiceImpl) OauthLogin(c echo.Context) error {
 	}
 
 	// generate random state and verifier
-	state := system.GenerateRandomState(32)
+	state, err := system.GenerateRandomState(32)
+    if err != nil {
+        slog.Error("Error generating random state", "GenerateRandomState", err)
+        return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
+    }
 	verifier := oauth2.GenerateVerifier()
 	// store state and verifier
-	_, err := a.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
+	_, err = a.insertToken(time.Now().Add(10*time.Second).Format(time.RFC3339), "", state, verifier)
 	if err != nil {
 		slog.Error("Error inserting token", "insertToken", err)
 		return c.Redirect(http.StatusTemporaryRedirect, system.CLIENT_URL+"/auth?error=unauthorized")
